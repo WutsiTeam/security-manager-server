@@ -81,7 +81,6 @@ class CreateOtpControllerTest {
         assertEquals("Your verification code: ${otp.code}", msg.firstValue.body)
     }
 
-
     @Test
     fun createOTPViaPushNotification() {
         // GIVEN

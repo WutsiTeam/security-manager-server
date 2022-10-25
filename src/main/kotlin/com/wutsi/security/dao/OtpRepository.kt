@@ -5,7 +5,6 @@ import org.springframework.cache.Cache
 import org.springframework.stereotype.Service
 import java.util.Optional
 
-
 @Service
 public class OtpRepository(private val cache: Cache) {
     fun save(otp: OtpEntity): OtpEntity {

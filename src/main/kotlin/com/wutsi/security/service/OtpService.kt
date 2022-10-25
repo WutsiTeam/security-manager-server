@@ -56,7 +56,6 @@ public class OtpService(
         )
     }
 
-
     private fun getMessaging(request: CreateOTPRequest): MessagingService =
         when (request.type.uppercase()) {
             MessagingType.SMS.name -> messagingProvider.get(MessagingType.SMS)
@@ -83,5 +82,4 @@ public class OtpService(
         }
         return buff.toString()
     }
-
 }
