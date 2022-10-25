@@ -1,12 +1,20 @@
 package com.wutsi.security.`delegate`
 
 import com.wutsi.security.dto.GetKeyResponse
+import com.wutsi.security.dto.Key
+import com.wutsi.security.service.KeyService
 import org.springframework.stereotype.Service
-import kotlin.Long
 
 @Service
-public class GetKeyDelegate() {
+public class GetKeyDelegate(private val service: KeyService) {
     public fun invoke(id: Long): GetKeyResponse {
-        TODO()
+        val key = service.findById(id)
+        return GetKeyResponse(
+            key = Key(
+                id = key.id!!,
+                algorithm = key.algorithm,
+                content = key.publicKey
+            )
+        )
     }
 }
