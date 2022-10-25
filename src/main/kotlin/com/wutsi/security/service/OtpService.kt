@@ -93,7 +93,7 @@ public class OtpService(
             MessagingType.PUSH_NOTIFICATION.name -> messagingProvider.get(MessagingType.PUSH_NOTIFICATION)
             else -> throw BadRequestException(
                 error = Error(
-                    code = ErrorURN.ADDRESS_TYPE_NOT_VALID.urn,
+                    code = ErrorURN.OTP_ADDRESS_TYPE_NOT_VALID.urn,
                     parameter = Parameter(
                         type = ParameterType.PARAMETER_TYPE_PAYLOAD,
                         name = "type",

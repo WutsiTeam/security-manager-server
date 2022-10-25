@@ -1,21 +1,21 @@
 package com.wutsi.security.endpoint
 
-import com.wutsi.security.`delegate`.CreateUserDelegate
-import com.wutsi.security.dto.CreateUserRequest
-import com.wutsi.security.dto.CreateUserResponse
+import com.wutsi.security.`delegate`.CreatePasswordDelegate
+import com.wutsi.security.dto.CreatePasswordRequest
+import com.wutsi.security.dto.CreatePasswordResponse
 import org.springframework.web.bind.`annotation`.PostMapping
 import org.springframework.web.bind.`annotation`.RequestBody
 import org.springframework.web.bind.`annotation`.RestController
 import javax.validation.Valid
 
 @RestController
-public class CreateUserController(
-    public val `delegate`: CreateUserDelegate
+public class CreatePasswordController(
+    public val `delegate`: CreatePasswordDelegate
 ) {
-    @PostMapping("/v1/users")
+    @PostMapping("/v1/passwords")
     public fun invoke(
         @Valid @RequestBody
-        request: CreateUserRequest
-    ): CreateUserResponse =
+        request: CreatePasswordRequest
+    ): CreatePasswordResponse =
         delegate.invoke(request)
 }

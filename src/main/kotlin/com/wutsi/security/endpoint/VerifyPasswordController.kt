@@ -1,7 +1,7 @@
 package com.wutsi.security.endpoint
 
-import com.wutsi.security.`delegate`.UpdateUserStatusDelegate
-import com.wutsi.security.dto.UpdateUserStatusRequest
+import com.wutsi.security.`delegate`.VerifyPasswordDelegate
+import com.wutsi.security.dto.VerifyPasswordRequest
 import org.springframework.web.bind.`annotation`.PostMapping
 import org.springframework.web.bind.`annotation`.RequestBody
 import org.springframework.web.bind.`annotation`.RequestParam
@@ -10,14 +10,14 @@ import javax.validation.Valid
 import kotlin.Long
 
 @RestController
-public class UpdateUserStatusController(
-    public val `delegate`: UpdateUserStatusDelegate
+public class VerifyPasswordController(
+    public val `delegate`: VerifyPasswordDelegate
 ) {
-    @PostMapping("/v1/users/{id}/status")
+    @PostMapping("/v1/passwords/{id}/verify")
     public fun invoke(
         @RequestParam(name = "id", required = false) id: Long,
         @Valid @RequestBody
-        request: UpdateUserStatusRequest
+        request: VerifyPasswordRequest
     ) {
         delegate.invoke(id, request)
     }

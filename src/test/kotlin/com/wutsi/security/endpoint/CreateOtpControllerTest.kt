@@ -191,7 +191,7 @@ class CreateOtpControllerTest {
         assertEquals(HttpStatus.BAD_REQUEST, ex.statusCode)
 
         val response = ObjectMapper().readValue(ex.responseBodyAsString, ErrorResponse::class.java)
-        assertEquals(ErrorURN.ADDRESS_TYPE_NOT_VALID.urn, response.error.code)
+        assertEquals(ErrorURN.OTP_ADDRESS_TYPE_NOT_VALID.urn, response.error.code)
     }
 
     private fun url() = "http://localhost:$port/v1/otp"

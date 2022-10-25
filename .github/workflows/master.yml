@@ -1,3 +1,4 @@
+
 name: master
 
 on:
@@ -13,8 +14,8 @@ jobs:
       mysql:
         image: mysql:8.0
         env:
-          MYSQL_USER: mysql
-          MYSQL_PASSWORD: mysql
+          MYSQL_USER: admin
+          MYSQL_PASSWORD: admin
           MYSQL_ROOT_PASSWORD: root
           MYSQL_DATABASE: security_manager
         ports:
@@ -31,7 +32,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
         run: |
-          mvn -Dspring.datasource.password=root -q -s settings.xml install
+          mvn -Dspring.datasource.username=root -Dspring.datasource.password=root -q -s settings.xml install
 
       - name: Upload app bundle
         uses: actions/upload-artifact@v3
@@ -96,7 +97,7 @@ jobs:
           heroku config:set --app ${HEROKU_APP} FIREBASE_CREDENTIALS="${FIREBASE_CREDENTIALS}"
           heroku addons -a ${HEROKU_APP} | grep papertrail && echo 'addon: papertrail exists' ||  heroku addons:create papertrail -a ${HEROKU_APP}
           heroku addons -a ${HEROKU_APP} | grep memcachier && echo 'addon: memcachier exists' ||  heroku addons:create memcachier -a ${HEROKU_APP}
-          heroku deploy:jar security-manager-server.jar --app ${HEROKU_APP}
+          heroku deploy:jar security_manager-server.jar --app ${HEROKU_APP}
 
       - name: Health check
         env:
@@ -175,7 +176,7 @@ jobs:
           heroku config:set --app ${HEROKU_APP} FIREBASE_CREDENTIALS="${FIREBASE_CREDENTIALS}"
           heroku addons -a ${HEROKU_APP} | grep papertrail && echo 'addon: papertrail exists' ||  heroku addons:create papertrail -a ${HEROKU_APP}
           heroku addons -a ${HEROKU_APP} | grep memcachier && echo 'addon: memcachier exists' ||  heroku addons:create memcachier -a ${HEROKU_APP}
-          heroku deploy:jar security-manager-server.jar --app ${HEROKU_APP}
+          heroku deploy:jar security_manager-server.jar --app ${HEROKU_APP}
 
       - name: Health check
         env:

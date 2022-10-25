@@ -3,7 +3,7 @@ package com.wutsi.security.dto
 import javax.validation.constraints.NotBlank
 import kotlin.String
 
-public data class UpdateUserStatusRequest(
+public data class VerifyPasswordRequest(
     @get:NotBlank
-    public val status: String = ""
+    public val `value`: String = ""
 )

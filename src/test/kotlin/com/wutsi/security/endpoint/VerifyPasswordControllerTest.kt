@@ -6,7 +6,7 @@ import org.springframework.boot.test.web.server.LocalServerPort
 import kotlin.Int
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-public class CreateUserControllerTest {
+public class VerifyPasswordControllerTest {
     @LocalServerPort
     public val port: Int = 0
 
