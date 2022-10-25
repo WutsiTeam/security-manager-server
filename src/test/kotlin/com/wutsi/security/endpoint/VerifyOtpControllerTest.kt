@@ -103,7 +103,7 @@ public class VerifyOtpControllerTest {
         assertEquals(ErrorURN.OTP_NOT_VALID.urn, response.error.code)
     }
 
-    private fun url(token: String) = "http://localhost:$port/v1/otp/$token"
+    private fun url(token: String) = "http://localhost:$port/v1/otp/$token/verify"
 
     private fun createOtp(code: String, expires: Long = System.currentTimeMillis() + 900000) = OtpEntity(
         token = UUID.randomUUID().toString(),

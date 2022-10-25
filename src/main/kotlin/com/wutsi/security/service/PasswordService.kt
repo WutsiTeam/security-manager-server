@@ -3,6 +3,7 @@ package com.wutsi.security.service
 import com.wutsi.platform.core.error.Error
 import com.wutsi.platform.core.error.Parameter
 import com.wutsi.platform.core.error.ParameterType
+import com.wutsi.platform.core.error.exception.ConflictException
 import com.wutsi.platform.core.error.exception.NotFoundException
 import com.wutsi.security.dao.PasswordRepository
 import com.wutsi.security.dto.CreatePasswordRequest
@@ -40,7 +41,7 @@ public class PasswordService(
         val password = findById(id)
         val value = hash(password.id!!, request.value, password.salt)
         if (value != password.value) {
-            throw NotFoundException(
+            throw ConflictException(
                 error = Error(
                     code = ErrorURN.PASSWORD_MISMATCH.urn
                 )
