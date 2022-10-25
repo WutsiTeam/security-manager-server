@@ -1,12 +1,12 @@
 package com.wutsi.security.`delegate`
 
 import com.wutsi.security.dto.VerifyOTPRequest
+import com.wutsi.security.service.OtpService
 import org.springframework.stereotype.Service
-import kotlin.String
 
 @Service
-public class VerifyOtpDelegate() {
+public class VerifyOtpDelegate(private val service: OtpService) {
     public fun invoke(token: String, request: VerifyOTPRequest) {
-        TODO()
+        service.verify(token, request)
     }
 }

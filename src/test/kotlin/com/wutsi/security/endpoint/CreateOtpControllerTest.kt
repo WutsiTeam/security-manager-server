@@ -66,6 +66,8 @@ class CreateOtpControllerTest {
         val response = rest.postForEntity(url(), request, CreateOTPResponse::class.java)
 
         // THEN
+        assertEquals(HttpStatus.OK, response.statusCode)
+
         val token = response.body?.token
         assertNotNull(token)
 
@@ -95,6 +97,8 @@ class CreateOtpControllerTest {
         val response = rest.postForEntity(url(), request, CreateOTPResponse::class.java)
 
         // THEN
+        assertEquals(HttpStatus.OK, response.statusCode)
+
         val token = response.body?.token
         assertNotNull(token)
 
@@ -124,6 +128,8 @@ class CreateOtpControllerTest {
         val response = rest.postForEntity(url(), request, CreateOTPResponse::class.java)
 
         // THEN
+        assertEquals(HttpStatus.OK, response.statusCode)
+
         val token = response.body?.token
         assertNotNull(token)
 
@@ -153,6 +159,8 @@ class CreateOtpControllerTest {
         val response = rest.postForEntity(url(), request, CreateOTPResponse::class.java)
 
         // THEN
+        assertEquals(HttpStatus.OK, response.statusCode)
+
         val token = response.body?.token
         assertNotNull(token)
 

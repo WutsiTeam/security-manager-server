@@ -4,6 +4,7 @@ import com.wutsi.platform.core.error.Error
 import com.wutsi.platform.core.error.Parameter
 import com.wutsi.platform.core.error.ParameterType
 import com.wutsi.platform.core.error.exception.BadRequestException
+import com.wutsi.platform.core.error.exception.ConflictException
 import com.wutsi.platform.core.messaging.Message
 import com.wutsi.platform.core.messaging.MessagingService
 import com.wutsi.platform.core.messaging.MessagingServiceProvider
@@ -11,6 +12,7 @@ import com.wutsi.platform.core.messaging.MessagingType
 import com.wutsi.platform.core.messaging.Party
 import com.wutsi.security.dao.OtpRepository
 import com.wutsi.security.dto.CreateOTPRequest
+import com.wutsi.security.dto.VerifyOTPRequest
 import com.wutsi.security.entity.OtpEntity
 import com.wutsi.security.error.ErrorURN
 import org.springframework.context.MessageSource
@@ -54,6 +56,33 @@ public class OtpService(
                 )
             )
         )
+    }
+
+    fun verify(token: String, request: VerifyOTPRequest) {
+        val otp = dao.findById(token)
+            .orElseThrow {
+                ConflictException(
+                    error = Error(
+                        code = ErrorURN.OTP_EXPIRED.urn
+                    )
+                )
+            }
+
+        if (otp.expires < System.currentTimeMillis()) {
+            throw ConflictException(
+                error = Error(
+                    code = ErrorURN.OTP_EXPIRED.urn
+                )
+            )
+        }
+
+        if (otp.code != request.code) {
+            throw ConflictException(
+                error = Error(
+                    code = ErrorURN.OTP_NOT_VALID.urn
+                )
+            )
+        }
     }
 
     private fun getMessaging(request: CreateOTPRequest): MessagingService =
