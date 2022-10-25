@@ -84,7 +84,6 @@ public class VerifyOtpControllerTest {
         assertEquals(ErrorURN.OTP_EXPIRED.urn, response.error.code)
     }
 
-
     @Test
     public fun codeNotValid() {
         // GIVEN
