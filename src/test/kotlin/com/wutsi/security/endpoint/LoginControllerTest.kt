@@ -20,7 +20,7 @@ import com.wutsi.security.dto.LoginRequest
 import com.wutsi.security.dto.LoginResponse
 import com.wutsi.security.entity.OtpEntity
 import com.wutsi.security.error.ErrorURN
-import com.wutsi.security.service.AuthenticationService
+import com.wutsi.security.service.LoginService
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -35,6 +35,7 @@ import org.springframework.web.client.RestTemplate
 import java.util.UUID
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -46,7 +47,10 @@ class LoginControllerTest {
     protected val rest = RestTemplate()
 
     @Autowired
-    private lateinit var dao: OtpRepository
+    private lateinit var otpDao: OtpRepository
+
+    @Autowired
+    private lateinit var loginService: LoginService
 
     @MockBean
     private lateinit var messagingServiceProvider: MessagingServiceProvider
@@ -81,7 +85,7 @@ class LoginControllerTest {
         assertEquals(request.phoneNumber, msg.firstValue.recipient.phoneNumber)
 
         val token = response.error.data!!["mfaToken"].toString()
-        val otp = dao.findById(token)
+        val otp = otpDao.findById(token)
         assertTrue(otp.isPresent)
         assertEquals(request.phoneNumber, otp.get().address)
     }
@@ -129,7 +133,7 @@ class LoginControllerTest {
             expires = System.currentTimeMillis() + 900000,
             address = "+1237670000000"
         )
-        dao.save(otp)
+        otpDao.save(otp)
 
         // WHEN
         val request = LoginRequest(
@@ -142,15 +146,24 @@ class LoginControllerTest {
         assertEquals(HttpStatus.OK, response.statusCode)
 
         val accessToken = response.body?.accessToken
+        assertNotNull(accessToken)
         val decoded = JWT.decode(accessToken)
         assertEquals("100", decoded.subject)
         assertNotNull(decoded.keyId)
         assertEquals(SubjectType.USER.name, decoded.claims[JWTBuilder.CLAIM_SUBJECT_TYPE]?.asString())
         assertEquals(otp.address, decoded.claims[JWTBuilder.CLAIM_NAME]?.asString())
         assertEquals(
-            AuthenticationService.USER_TOKEN_TTL_MILLIS / 60000,
+            LoginService.USER_TOKEN_TTL_MILLIS / 60000,
             (decoded.expiresAt.time - decoded.issuedAt.time) / 60000
         )
+
+        val login = loginService.findByAccessToken(accessToken)
+        assertTrue(login.isPresent)
+        assertEquals(100L, login.get().accountId)
+        assertNotNull(login.get().expires)
+        assertNotNull(login.get().created)
+        assertNull(login.get().expired)
+        assertEquals(accessToken, login.get().accessToken)
     }
 
     @Test
@@ -162,7 +175,7 @@ class LoginControllerTest {
             expires = System.currentTimeMillis() + 900000,
             address = "+1237670000000"
         )
-        dao.save(otp)
+        otpDao.save(otp)
 
         // WHEN
         val request = LoginRequest(

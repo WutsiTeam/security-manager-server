@@ -2,20 +2,24 @@ package com.wutsi.security.`delegate`
 
 import com.wutsi.platform.core.error.Error
 import com.wutsi.platform.core.error.exception.BadRequestException
+import com.wutsi.platform.core.tracing.TracingContext
 import com.wutsi.security.error.ErrorURN
-import com.wutsi.security.service.AuthenticationService
+import com.wutsi.security.service.LoginService
 import org.springframework.stereotype.Service
 import javax.servlet.http.HttpServletRequest
+import javax.transaction.Transactional
 
 @Service
 class LogoutDelegate(
-    private val service: AuthenticationService,
-    private val request: HttpServletRequest
+    private val service: LoginService,
+    private val request: HttpServletRequest,
+    private val tracingContext: TracingContext
 ) {
     companion object {
         const val AUTHORIZATION_PREFIX = "Bearer "
     }
 
+    @Transactional
     fun invoke() {
         val authorization = request.getHeader("Authorization")
         if (authorization?.startsWith(AUTHORIZATION_PREFIX, true) != true) {
@@ -26,6 +30,9 @@ class LogoutDelegate(
             )
         }
         val accessToken = authorization.substring(AUTHORIZATION_PREFIX.length).trim()
-        service.logout(accessToken)
+        val login = service.logout(accessToken)
+        if (login != null) {
+            service.logoutPreviousSession(login, tracingContext.traceId())
+        }
     }
 }
