@@ -1,11 +1,11 @@
 package com.wutsi.security.dto
 
-import javax.validation.constraints.NotBlank
+import kotlin.Long
 import kotlin.String
 
 public data class LoginRequest(
-    @get:NotBlank
     public val phoneNumber: String = "",
     public val mfaToken: String = "",
+    public val accountId: Long = 0,
     public val verificationCode: String = ""
 )

@@ -75,6 +75,7 @@ class CreateOtpControllerTest {
         assertEquals(token, otp.token)
         assertEquals(6, otp.code.length)
         assertTrue(otp.expires - now >= 900000)
+        assertEquals(request.address, otp.address)
 
         val msg = argumentCaptor<Message>()
         verify(messaging).send(msg.capture())
@@ -137,6 +138,7 @@ class CreateOtpControllerTest {
         assertEquals(token, otp.token)
         assertEquals(6, otp.code.length)
         assertTrue(otp.expires - now >= 900000)
+        assertEquals(request.address, otp.address)
 
         val msg = argumentCaptor<Message>()
         verify(messaging).send(msg.capture())
@@ -168,6 +170,7 @@ class CreateOtpControllerTest {
         assertEquals(token, otp.token)
         assertEquals(6, otp.code.length)
         assertTrue(otp.expires - now >= 900000)
+        assertEquals(request.address, otp.address)
 
         val msg = argumentCaptor<Message>()
         verify(messaging).send(msg.capture())

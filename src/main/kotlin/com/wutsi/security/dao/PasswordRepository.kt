@@ -5,4 +5,6 @@ import org.springframework.data.repository.CrudRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface PasswordRepository : CrudRepository<PasswordEntity, Long>
+interface PasswordRepository : CrudRepository<PasswordEntity, Long> {
+    fun findByUsernameAndIsDeleted(username: String, isDeleted: Boolean): List<PasswordEntity>
+}

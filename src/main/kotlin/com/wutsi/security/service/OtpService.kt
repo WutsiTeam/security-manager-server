@@ -31,7 +31,8 @@ public class OtpService(
             OtpEntity(
                 token = UUID.randomUUID().toString(),
                 code = generateCode(6),
-                expires = System.currentTimeMillis() + 900 * 1000
+                expires = System.currentTimeMillis() + 900 * 1000,
+                address = request.address
             )
         )
 
@@ -58,7 +59,7 @@ public class OtpService(
         )
     }
 
-    fun verify(token: String, request: VerifyOTPRequest) {
+    fun verify(token: String, request: VerifyOTPRequest): OtpEntity {
         val otp = dao.findById(token)
             .orElseThrow {
                 ConflictException(
@@ -83,6 +84,7 @@ public class OtpService(
                 )
             )
         }
+        return otp
     }
 
     private fun getMessaging(request: CreateOTPRequest): MessagingService =

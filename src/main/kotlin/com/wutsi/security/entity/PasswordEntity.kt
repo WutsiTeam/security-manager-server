@@ -15,6 +15,7 @@ data class PasswordEntity(
     val id: Long? = null,
 
     var accountId: Long = -1,
+    val username: String = "",
     var value: String = "",
     val salt: String = "",
     var isDeleted: Boolean = false,

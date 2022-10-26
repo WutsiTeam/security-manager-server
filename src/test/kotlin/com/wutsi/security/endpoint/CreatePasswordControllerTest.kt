@@ -27,7 +27,8 @@ public class CreatePasswordControllerTest {
         // WHEN
         val request = CreatePasswordRequest(
             value = "123",
-            accountId = 1
+            accountId = 1,
+            username = "+15147580000"
         )
         val response = rest.postForEntity(url(), request, CreatePasswordResponse::class.java)
 
@@ -41,6 +42,7 @@ public class CreatePasswordControllerTest {
         assertEquals(32, password.value.length)
         assertEquals(36, password.salt.length)
         assertEquals(request.accountId, password.accountId)
+        assertEquals(request.username, password.username)
     }
 
     private fun url() = "http://localhost:$port/v1/passwords"

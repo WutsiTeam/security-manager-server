@@ -7,5 +7,7 @@ import kotlin.String
 public data class CreatePasswordRequest(
     @get:NotBlank
     public val `value`: String = "",
-    public val accountId: Long = 0
+    public val accountId: Long = 0,
+    @get:NotBlank
+    public val username: String = ""
 )
