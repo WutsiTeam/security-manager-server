@@ -1,4 +1,3 @@
-
 name: master
 
 on:
@@ -97,7 +96,7 @@ jobs:
           heroku config:set --app ${HEROKU_APP} FIREBASE_CREDENTIALS="${FIREBASE_CREDENTIALS}"
           heroku addons -a ${HEROKU_APP} | grep papertrail && echo 'addon: papertrail exists' ||  heroku addons:create papertrail -a ${HEROKU_APP}
           heroku addons -a ${HEROKU_APP} | grep memcachier && echo 'addon: memcachier exists' ||  heroku addons:create memcachier -a ${HEROKU_APP}
-          heroku deploy:jar security_manager-server.jar --app ${HEROKU_APP}
+          heroku deploy:jar security-manager-server.jar --app ${HEROKU_APP}
 
       - name: Health check
         env:
@@ -129,7 +128,7 @@ jobs:
           distribution: 'zulu'
           java-version: 11
 
-      - name: Get artigact
+      - name: Get artifact
         uses: actions/download-artifact@v3
         with:
           name: appbundle
@@ -176,7 +175,7 @@ jobs:
           heroku config:set --app ${HEROKU_APP} FIREBASE_CREDENTIALS="${FIREBASE_CREDENTIALS}"
           heroku addons -a ${HEROKU_APP} | grep papertrail && echo 'addon: papertrail exists' ||  heroku addons:create papertrail -a ${HEROKU_APP}
           heroku addons -a ${HEROKU_APP} | grep memcachier && echo 'addon: memcachier exists' ||  heroku addons:create memcachier -a ${HEROKU_APP}
-          heroku deploy:jar security_manager-server.jar --app ${HEROKU_APP}
+          heroku deploy:jar security-manager-server.jar --app ${HEROKU_APP}
 
       - name: Health check
         env:
