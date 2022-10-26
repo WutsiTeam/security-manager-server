@@ -21,8 +21,6 @@ spring:
 wutsi:
   client-id: security-manager
   platform:
-    security:
-      type: jwt
     cache:
       type: memcached
       memcached:
@@ -48,6 +46,11 @@ wutsi:
         cloud:
           access-token: ${WHATSAPP_ACCESS_TOKEN}
           phone-id: ${WHATSAPP_PHONE_ID}
+    security:
+      token-blacklist:
+        type: redis
+        redis:
+          url: ${REDISCLOUD_URL}
     stream:
       type: rabbitmq
       rabbitmq:

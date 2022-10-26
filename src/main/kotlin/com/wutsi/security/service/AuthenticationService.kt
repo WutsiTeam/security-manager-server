@@ -1,11 +1,13 @@
 package com.wutsi.security.service
 
+import com.auth0.jwt.JWT
 import com.wutsi.platform.core.error.Error
 import com.wutsi.platform.core.error.exception.ConflictException
 import com.wutsi.platform.core.error.exception.ForbiddenException
 import com.wutsi.platform.core.error.exception.NotFoundException
 import com.wutsi.platform.core.messaging.MessagingType
 import com.wutsi.platform.core.security.SubjectType
+import com.wutsi.platform.core.security.TokenBlacklistService
 import com.wutsi.platform.core.security.spring.jwt.JWTBuilder
 import com.wutsi.security.dto.CreateOTPRequest
 import com.wutsi.security.dto.LoginRequest
@@ -18,7 +20,8 @@ import org.springframework.stereotype.Service
 class AuthenticationService(
     private val otpService: OtpService,
     private val passwordService: PasswordService,
-    private val keyProvider: RSAKeyProviderImpl
+    private val keyProvider: RSAKeyProviderImpl,
+    private val blacklistService: TokenBlacklistService
 ) {
     companion object {
         const val USER_TOKEN_TTL_MILLIS = 84600000L // 1 day
@@ -37,6 +40,14 @@ class AuthenticationService(
             )
         } else {
             return verify(request)
+        }
+    }
+
+    fun logout(accessToken: String) {
+        val jwt = JWT.decode(accessToken)
+        val ttl = (jwt.expiresAt.time - System.currentTimeMillis()) / 1000
+        if (ttl > 0) {
+            blacklistService.add(accessToken, ttl)
         }
     }
 

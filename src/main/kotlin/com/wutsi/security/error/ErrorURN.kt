@@ -2,6 +2,7 @@ package com.wutsi.security.error
 
 enum class ErrorURN(val urn: String) {
     AUTHENTICATION_MFA_REQUIRED("urn:wutsi:error:security:authentication-mfa-required"),
+    AUTHORIZATION_HEADER_MISSING("urn:wutsi:error:security:authorization-header-missing"),
 
     KEY_NOT_FOUND("urn:wutsi:error:security:key-not-found"),
     KEY_EXPIRED("urn:wutsi:error:security:key-expired"),
