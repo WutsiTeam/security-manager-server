@@ -4,7 +4,7 @@ CODEGEN_JAR=~/wutsi-codegen/wutsi-codegen.jar
 
 API_NAME=security-manager
 API_URL=https://raw.githubusercontent.com/wutsi/wutsi-openapi/master/src/openapi/v2/security.yaml
-GITHUB_USER=WutsiTeam
+GITHUB_USER=wutsi
 
 echo "Generating code from ${API_URL}"
 java -jar ${CODEGEN_JAR} server \
