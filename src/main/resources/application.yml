@@ -77,6 +77,8 @@ wutsi:
   client-id: security-manager
   application:
     name: security-manager
+    otp:
+      test-addresses: [ ]
   platform:
     security:
       type: none

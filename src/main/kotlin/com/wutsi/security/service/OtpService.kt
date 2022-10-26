@@ -15,17 +15,32 @@ import com.wutsi.security.dto.CreateOTPRequest
 import com.wutsi.security.dto.VerifyOTPRequest
 import com.wutsi.security.entity.OtpEntity
 import com.wutsi.security.error.ErrorURN
+import org.slf4j.LoggerFactory
+import org.springframework.boot.context.properties.ConfigurationProperties
 import org.springframework.context.MessageSource
 import org.springframework.context.i18n.LocaleContextHolder
 import org.springframework.stereotype.Service
 import java.util.UUID
+import javax.annotation.PostConstruct
 
 @Service
+@ConfigurationProperties(prefix = "wutsi.application.otp")
 public class OtpService(
     private val dao: OtpRepository,
     private val messagingProvider: MessagingServiceProvider,
     private val messageSource: MessageSource
 ) {
+    companion object {
+        private val LOGGER = LoggerFactory.getLogger(OtpService::class.java)
+    }
+
+    var testAddresses: MutableList<String> = mutableListOf()
+
+    @PostConstruct
+    fun init() {
+        LOGGER.info("Test Addresses: $testAddresses")
+    }
+
     fun create(request: CreateOTPRequest): OtpEntity =
         dao.save(
             OtpEntity(
@@ -36,7 +51,11 @@ public class OtpService(
             )
         )
 
-    fun send(request: CreateOTPRequest, otp: OtpEntity): String {
+    fun send(request: CreateOTPRequest, otp: OtpEntity): String? {
+        if (isTestAddress(request.address)) { // Never send SMS to test addresses
+            return null
+        }
+
         val locale = LocaleContextHolder.getLocale()
         return getMessaging(request).send(
             Message(
@@ -77,7 +96,7 @@ public class OtpService(
             )
         }
 
-        if (otp.code != request.code) {
+        if (!isTestAddress(otp.address) && otp.code != request.code) {
             throw ConflictException(
                 error = Error(
                     code = ErrorURN.OTP_NOT_VALID.urn
@@ -86,6 +105,9 @@ public class OtpService(
         }
         return otp
     }
+
+    private fun isTestAddress(address: String): Boolean =
+        testAddresses.contains(address.lowercase())
 
     private fun getMessaging(request: CreateOTPRequest): MessagingService =
         when (request.type.uppercase()) {

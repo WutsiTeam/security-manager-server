@@ -27,7 +27,6 @@ wutsi:
         username: ${MEMCACHIER_USERNAME}
         password: ${MEMCACHIER_PASSWORD}
         servers: ${MEMCACHIER_SERVERS}
-        ttl: 900 # 5 minutes
     messaging:
       sms:
         type: aws

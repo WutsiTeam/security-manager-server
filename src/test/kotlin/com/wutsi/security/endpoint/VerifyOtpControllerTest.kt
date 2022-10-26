@@ -6,6 +6,7 @@ import com.wutsi.security.dao.OtpRepository
 import com.wutsi.security.dto.VerifyOTPRequest
 import com.wutsi.security.entity.OtpEntity
 import com.wutsi.security.error.ErrorURN
+import com.wutsi.security.service.OtpService
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -28,9 +29,13 @@ public class VerifyOtpControllerTest {
     @Autowired
     private lateinit var dao: OtpRepository
 
+    @Autowired
+    private lateinit var service: OtpService
+
     @BeforeEach
     fun setUp() {
         rest = RestTemplate()
+        service.testAddresses = mutableListOf()
     }
 
     @Test
@@ -41,6 +46,22 @@ public class VerifyOtpControllerTest {
 
         // WHEN
         val request = VerifyOTPRequest(code = otp.code)
+        val response = rest.postForEntity(url(otp.token), request, Any::class.java)
+
+        // THEN
+        assertEquals(HttpStatus.OK, response.statusCode)
+    }
+
+    @Test
+    public fun acceptAnyCodeFromTest() {
+        // GIVEN
+        val otp = createOtp("000000")
+        dao.save(otp)
+
+        service.testAddresses = mutableListOf(otp.address)
+
+        // WHEN
+        val request = VerifyOTPRequest(code = "xxxxxxxx")
         val response = rest.postForEntity(url(otp.token), request, Any::class.java)
 
         // THEN

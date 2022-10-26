@@ -1,9 +1,11 @@
 package com.wutsi.security.endpoint
 
 import com.fasterxml.jackson.databind.ObjectMapper
+import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.argumentCaptor
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.mock
+import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
 import com.wutsi.platform.core.error.ErrorResponse
@@ -15,6 +17,7 @@ import com.wutsi.security.dao.OtpRepository
 import com.wutsi.security.dto.CreateOTPRequest
 import com.wutsi.security.dto.CreateOTPResponse
 import com.wutsi.security.error.ErrorURN
+import com.wutsi.security.service.OtpService
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -45,11 +48,15 @@ class CreateOtpControllerTest {
 
     private lateinit var messaging: MessagingService
 
+    @Autowired
+    private lateinit var service: OtpService
+
     @BeforeEach
     fun setUp() {
         rest = RestTemplate()
 
         messaging = mock()
+        service.testAddresses = mutableListOf()
     }
 
     @Test
@@ -195,6 +202,32 @@ class CreateOtpControllerTest {
 
         val response = ObjectMapper().readValue(ex.responseBodyAsString, ErrorResponse::class.java)
         assertEquals(ErrorURN.OTP_ADDRESS_TYPE_NOT_VALID.urn, response.error.code)
+    }
+
+    @Test
+    fun `never send OTP to test address`() {
+        // WHEN
+        val now = System.currentTimeMillis()
+        val request = CreateOTPRequest(
+            type = "bad-address-type",
+            address = "+23799505678"
+        )
+        service.testAddresses = mutableListOf(request.address)
+        val response = rest.postForEntity(url(), request, CreateOTPResponse::class.java)
+
+        // THEN
+        assertEquals(HttpStatus.OK, response.statusCode)
+
+        val token = response.body?.token
+        assertNotNull(token)
+
+        val otp = dao.findById(token).get()
+        assertEquals(token, otp.token)
+        assertEquals(6, otp.code.length)
+        assertTrue(otp.expires - now >= 900000)
+        assertEquals(request.address, otp.address)
+
+        verify(messaging, never()).send(any())
     }
 
     private fun url() = "http://localhost:$port/v1/otp"
