@@ -3,7 +3,7 @@
 CODEGEN_JAR=~/wutsi-codegen/wutsi-codegen.jar
 
 API_NAME=security-manager
-API_URL=https://raw.githubusercontent.com/wutsi/wutsi-openapi/master/src/openapi/v2/security.yaml
+API_URL=https://raw.githubusercontent.com/wutsi/wutsi-openapi/master/src/openapi/v2/security-manager.yaml
 GITHUB_USER=wutsi
 
 echo "Generating code from ${API_URL}"
