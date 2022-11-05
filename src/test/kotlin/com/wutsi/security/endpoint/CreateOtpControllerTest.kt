@@ -81,7 +81,7 @@ class CreateOtpControllerTest {
         val otp = dao.findById(token).get()
         assertEquals(token, otp.token)
         assertEquals(6, otp.code.length)
-        assertTrue(otp.expires - now >= 900000)
+        assertTrue(otp.expires - now >= OtpService.OTP_TTL_MILLIS)
         assertEquals(request.address, otp.address)
 
         val msg = argumentCaptor<Message>()
@@ -113,7 +113,7 @@ class CreateOtpControllerTest {
         val otp = dao.findById(token).get()
         assertEquals(token, otp.token)
         assertEquals(6, otp.code.length)
-        assertTrue(otp.expires - now >= 900000)
+        assertTrue(otp.expires - now >= OtpService.OTP_TTL_MILLIS)
 
         val msg = argumentCaptor<Message>()
         verify(messaging).send(msg.capture())
@@ -144,7 +144,7 @@ class CreateOtpControllerTest {
         val otp = dao.findById(token).get()
         assertEquals(token, otp.token)
         assertEquals(6, otp.code.length)
-        assertTrue(otp.expires - now >= 900000)
+        assertTrue(otp.expires - now >= OtpService.OTP_TTL_MILLIS)
         assertEquals(request.address, otp.address)
 
         val msg = argumentCaptor<Message>()
@@ -176,7 +176,7 @@ class CreateOtpControllerTest {
         val otp = dao.findById(token).get()
         assertEquals(token, otp.token)
         assertEquals(6, otp.code.length)
-        assertTrue(otp.expires - now >= 900000)
+        assertTrue(otp.expires - now >= OtpService.OTP_TTL_MILLIS)
         assertEquals(request.address, otp.address)
 
         val msg = argumentCaptor<Message>()
@@ -224,7 +224,7 @@ class CreateOtpControllerTest {
         val otp = dao.findById(token).get()
         assertEquals(token, otp.token)
         assertEquals(6, otp.code.length)
-        assertTrue(otp.expires - now >= 900000)
+        assertTrue(otp.expires - now >= OtpService.OTP_TTL_MILLIS)
         assertEquals(request.address, otp.address)
 
         verify(messaging, never()).send(any())

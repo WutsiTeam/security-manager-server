@@ -18,7 +18,7 @@ import java.util.Optional
 import java.util.UUID
 
 @Service
-public class PasswordService(
+class PasswordService(
     private val dao: PasswordRepository
 ) {
     fun create(request: CreatePasswordRequest): PasswordEntity {

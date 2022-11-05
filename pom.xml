@@ -33,7 +33,9 @@
     <hikari-cp.version>5.0.1</hikari-cp.version>
     <mysql.version>8.0.31</mysql.version>
     <flyway.version>9.3.0</flyway.version>
+
     <wutsi-platform-core.version>0.0.181</wutsi-platform-core.version>
+    <membership-manager.version>1.0.1</membership-manager.version>
   </properties>
 
   <dependencies>
@@ -42,6 +44,12 @@
       <artifactId>wutsi-platform-core</artifactId>
       <version>${wutsi-platform-core.version}</version>
     </dependency>
+    <dependency>
+      <groupId>com.wutsi.membership.manager</groupId>
+      <artifactId>membership-manager-sdk-kotlin</artifactId>
+      <version>${membership-manager.version}</version>
+    </dependency>
+
     <dependency>
       <groupId>org.jetbrains.kotlin</groupId>
       <artifactId>kotlin-stdlib</artifactId>

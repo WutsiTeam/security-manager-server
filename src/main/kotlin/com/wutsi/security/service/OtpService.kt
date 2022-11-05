@@ -32,6 +32,7 @@ public class OtpService(
 ) {
     companion object {
         private val LOGGER = LoggerFactory.getLogger(OtpService::class.java)
+        const val OTP_TTL_MILLIS = 300L * 1000 // 5 mins
     }
 
     var testAddresses: MutableList<String> = mutableListOf()
@@ -46,7 +47,7 @@ public class OtpService(
             OtpEntity(
                 token = UUID.randomUUID().toString(),
                 code = generateCode(6),
-                expires = System.currentTimeMillis() + 900 * 1000,
+                expires = System.currentTimeMillis() + OTP_TTL_MILLIS,
                 address = request.address
             )
         )
