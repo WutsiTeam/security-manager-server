@@ -2,6 +2,7 @@ package com.wutsi.security.event
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.wutsi.membership.manager.event.MemberEventPayload
+import com.wutsi.platform.core.logging.KVLogger
 import com.wutsi.platform.core.messaging.MessagingType
 import com.wutsi.platform.core.stream.Event
 import com.wutsi.security.dto.CreateOTPRequest
@@ -15,11 +16,15 @@ import javax.transaction.Transactional
 class MembershipEventHandler(
     private val otpService: OtpService,
     private val passwordService: PasswordService,
-    private val mapper: ObjectMapper
+    private val mapper: ObjectMapper,
+    private val logger: KVLogger
 ) {
     fun onRegistrationStarted(event: Event) {
         val payload = toMemberPayload(event)
+        log(payload)
+
         if (System.currentTimeMillis() - event.timestamp.toInstant().toEpochMilli() > OtpService.OTP_TTL_MILLIS) {
+            logger.add("expired", true)
             return
         }
         otpService.create(
@@ -33,6 +38,8 @@ class MembershipEventHandler(
     @Transactional
     fun onMemberRegistered(event: Event) {
         val payload = toMemberPayload(event)
+        log(payload)
+
         passwordService.create(
             CreatePasswordRequest(
                 accountId = payload.accountId,
@@ -45,9 +52,17 @@ class MembershipEventHandler(
     @Transactional
     fun onMemberDeleted(event: Event) {
         val payload = toMemberPayload(event)
+        log(payload)
+
         passwordService.deleteByAccountId(payload.accountId)
     }
 
     private fun toMemberPayload(event: Event): MemberEventPayload =
         mapper.readValue(event.payload, MemberEventPayload::class.java)
+
+    private fun log(payload: MemberEventPayload) {
+        logger.add("payload_account_id", payload.accountId)
+        logger.add("payload_phone_number", payload.phoneNumber)
+        logger.add("payload_pin", "*********")
+    }
 }
