@@ -33,10 +33,7 @@ class MembershipEventHandler(
             type = MessagingType.SMS.name
         )
         val otp = otpService.create(request)
-        val messageId = otpService.send(request, otp)
-
         logger.add("token", otp.token)
-        logger.add("message_id", messageId)
     }
 
     @Transactional

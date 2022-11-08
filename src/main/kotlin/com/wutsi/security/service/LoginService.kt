@@ -108,7 +108,6 @@ class LoginService(
             type = MessagingType.SMS.name
         )
         val otp = otpService.create(otpRequest)
-        otpService.send(otpRequest, otp)
 
         return otp
     }

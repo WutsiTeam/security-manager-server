@@ -58,7 +58,6 @@ internal class MembershipEventHandlerTest {
                 type = MessagingType.SMS.name
             )
         )
-        verify(otpService).send(any(), any())
     }
 
     @Test

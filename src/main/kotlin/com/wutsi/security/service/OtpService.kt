@@ -42,8 +42,9 @@ public class OtpService(
         LOGGER.info("Test Addresses: $testAddresses")
     }
 
-    fun create(request: CreateOTPRequest): OtpEntity =
-        dao.save(
+    fun create(request: CreateOTPRequest): OtpEntity {
+        // Create the OTP
+        val otp = dao.save(
             OtpEntity(
                 token = UUID.randomUUID().toString(),
                 code = generateCode(6),
@@ -52,13 +53,13 @@ public class OtpService(
             )
         )
 
-    fun send(request: CreateOTPRequest, otp: OtpEntity): String? {
+        // Send
         if (isTestAddress(request.address)) { // Never send SMS to test addresses
-            return null
+            return otp
         }
 
         val locale = LocaleContextHolder.getLocale()
-        return getMessaging(request).send(
+        getMessaging(request).send(
             Message(
                 recipient = Party(
                     phoneNumber = request.address,
@@ -77,6 +78,8 @@ public class OtpService(
                 )
             )
         )
+
+        return otp
     }
 
     fun verify(token: String, request: VerifyOTPRequest): OtpEntity {
