@@ -40,7 +40,7 @@ internal class MembershipEventHandlerTest {
         // GIVEN
         val otp = OtpEntity()
         doReturn(otp).whenever(otpService).create(any())
-        
+
         // WHEN
         val payload = MemberEventPayload(
             phoneNumber = "+237670000010"
