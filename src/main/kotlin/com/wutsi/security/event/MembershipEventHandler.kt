@@ -42,6 +42,12 @@ class MembershipEventHandler(
         )
     }
 
+    @Transactional
+    fun onMemberDeleted(event: Event) {
+        val payload = toMemberPayload(event)
+        passwordService.deleteByAccountId(payload.accountId)
+    }
+
     private fun toMemberPayload(event: Event): MemberEventPayload =
         mapper.readValue(event.payload, MemberEventPayload::class.java)
 }

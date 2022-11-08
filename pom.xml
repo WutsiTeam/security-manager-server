@@ -34,8 +34,8 @@
     <mysql.version>8.0.31</mysql.version>
     <flyway.version>9.3.0</flyway.version>
 
-    <wutsi-platform-core.version>0.0.181</wutsi-platform-core.version>
-    <membership-manager.version>1.0.1</membership-manager.version>
+    <wutsi-platform-core.version>0.0.183</wutsi-platform-core.version>
+    <membership-manager.version>1.0.2</membership-manager.version>
   </properties>
 
   <dependencies>

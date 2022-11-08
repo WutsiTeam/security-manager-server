@@ -14,6 +14,7 @@ class EventHandler(
         when (event.type) {
             EventURN.MEMBER_REGISTRATION_STARTED.urn -> membership.onRegistrationStarted(event)
             EventURN.MEMBER_REGISTERED.urn -> membership.onMemberRegistered(event)
+            EventURN.MEMBER_DELETED.urn -> membership.onMemberDeleted(event)
             else -> {}
         }
     }

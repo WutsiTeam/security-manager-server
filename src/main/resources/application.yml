@@ -98,7 +98,7 @@ wutsi:
     stream:
       name: ${wutsi.application.name}
       type: local
-      subscription:
+      subscriptions:
         - membership-manager
     tracing:
       client-id: ${wutsi.application.name}

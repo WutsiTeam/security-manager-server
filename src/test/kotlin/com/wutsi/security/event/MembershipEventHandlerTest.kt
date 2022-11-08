@@ -93,4 +93,20 @@ internal class MembershipEventHandlerTest {
             )
         )
     }
+
+    @Test
+    fun onMemberDeleted() {
+        // WHEN
+        val payload = MemberEventPayload(
+            accountId = 111L
+        )
+        val event = Event(
+            type = EventURN.MEMBER_DELETED.urn,
+            payload = mapper.writeValueAsString(payload)
+        )
+        handler.onMemberDeleted(event)
+
+        // THEN
+        verify(passwordService).deleteByAccountId(payload.accountId)
+    }
 }

@@ -53,8 +53,20 @@ class PasswordService(
 
     fun delete(id: Long) {
         val password = dao.findById(id)
-            .orElse(null)
-        if (password?.isDeleted == false) {
+        if (password.isPresent) {
+            delete(password.get())
+        }
+    }
+
+    fun deleteByAccountId(accountId: Long) {
+        val password = dao.findByAccountIdAndIsDeleted(accountId, false)
+        password.forEach {
+            delete(it)
+        }
+    }
+
+    private fun delete(password: PasswordEntity) {
+        if (!password.isDeleted) {
             password.isDeleted = true
             password.deleted = Date()
             dao.save(password)

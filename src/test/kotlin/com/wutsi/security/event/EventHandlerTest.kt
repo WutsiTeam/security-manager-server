@@ -56,4 +56,21 @@ internal class EventHandlerTest {
         // THEN
         verify(membership).onMemberRegistered(event)
     }
+
+    @Test
+    fun onMemberDeleted() {
+        // WHEN
+        val event = Event(
+            type = EventURN.MEMBER_DELETED.urn,
+            payload = mapper.writeValueAsString(
+                MemberEventPayload(
+                    accountId = 111L
+                )
+            )
+        )
+        handler.handleEvent(event)
+
+        // THEN
+        verify(membership).onMemberDeleted(event)
+    }
 }
