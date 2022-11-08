@@ -2,14 +2,17 @@ package com.wutsi.security.event
 
 import com.fasterxml.jackson.databind.ObjectMapper
 import com.nhaarman.mockitokotlin2.any
+import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.never
 import com.nhaarman.mockitokotlin2.verify
+import com.nhaarman.mockitokotlin2.whenever
 import com.wutsi.membership.manager.event.EventURN
 import com.wutsi.membership.manager.event.MemberEventPayload
 import com.wutsi.platform.core.messaging.MessagingType
 import com.wutsi.platform.core.stream.Event
 import com.wutsi.security.dto.CreateOTPRequest
 import com.wutsi.security.dto.CreatePasswordRequest
+import com.wutsi.security.entity.OtpEntity
 import com.wutsi.security.service.OtpService
 import com.wutsi.security.service.PasswordService
 import org.junit.jupiter.api.Test
@@ -34,6 +37,10 @@ internal class MembershipEventHandlerTest {
 
     @Test
     fun onRegistrationStarted() {
+        // GIVEN
+        val otp = OtpEntity()
+        doReturn(otp).whenever(otpService).create(any())
+        
         // WHEN
         val payload = MemberEventPayload(
             phoneNumber = "+237670000010"
@@ -51,6 +58,7 @@ internal class MembershipEventHandlerTest {
                 type = MessagingType.SMS.name
             )
         )
+        verify(otpService).send(any(), any())
     }
 
     @Test
