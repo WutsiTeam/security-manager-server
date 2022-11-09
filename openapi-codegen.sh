@@ -22,7 +22,8 @@ java -jar ${CODEGEN_JAR} server \
     -service_logger \
     -service_messaging \
     -service_mqueue \
-    -service_slack
+    -service_slack \
+    -service_swagger
 
 if [ $? -eq 0 ]
 then
