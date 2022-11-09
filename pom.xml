@@ -35,7 +35,7 @@
     <flyway.version>9.3.0</flyway.version>
 
     <wutsi-platform-core.version>0.0.186</wutsi-platform-core.version>
-    <membership-manager.version>1.0.2</membership-manager.version>
+    <membership-manager.version>1.0.3</membership-manager.version>
   </properties>
 
   <dependencies>
