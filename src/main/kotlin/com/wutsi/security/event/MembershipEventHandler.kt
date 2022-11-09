@@ -41,13 +41,14 @@ class MembershipEventHandler(
         val payload = toMemberPayload(event)
         log(payload)
 
-        passwordService.create(
+        val password = passwordService.create(
             CreatePasswordRequest(
                 accountId = payload.accountId,
                 username = payload.phoneNumber,
                 value = payload.pin!!
             )
         )
+        logger.add("password_id", password.id)
     }
 
     @Transactional
