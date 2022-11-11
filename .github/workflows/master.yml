@@ -63,7 +63,7 @@ jobs:
       - name: Heroku-Deploy-Test
         env:
           HEROKU_API_KEY: ${{secrets.HEROKU_API_KEY_TEST}}
-          HEROKU_APP: security-manager-server-test
+          HEROKU_APP: security-manager-test
           CLOUDAMQP_URL: ${{secrets.CLOUDAMQP_URL_TEST}}
           AWS_ACCESS_KEY: ${{secrets.AWS_ACCESS_KEY_TEST}}
           AWS_SECRET_KEY: ${{secrets.AWS_SECRET_KEY_TEST}}
@@ -105,7 +105,7 @@ jobs:
 
       - name: Health check
         env:
-          HEROKU_APP: security-manager-server-test
+          HEROKU_APP: security-manager-test
         run: |
           sleep 90
           curl -sSf https://${HEROKU_APP}.herokuapp.com/actuator/health >> /dev/null
@@ -115,7 +115,7 @@ jobs:
         if: ${{always()}}
         env:
           SLACK_COLOR: ${{job.status}}
-          SLACK_TITLE: security-manager-server-test
+          SLACK_TITLE: security-manager-test
           SLACK_MESSAGE: Heroku Deployment in TEST
           MSG_MINIMAL: true
           SLACK_WEBHOOK: ${{secrets.SLACK_WEBHOOK_URL}}
@@ -146,7 +146,7 @@ jobs:
       - name: Heroku-Deploy-Prod
         env:
           HEROKU_API_KEY: ${{secrets.HEROKU_API_KEY_PROD}}
-          HEROKU_APP: security-manager-server-prod
+          HEROKU_APP: security-manager-prod
           CLOUDAMQP_URL: ${{secrets.CLOUDAMQP_URL_PROD}}
           AWS_ACCESS_KEY: ${{secrets.AWS_ACCESS_KEY_PROD}}
           AWS_SECRET_KEY: ${{secrets.AWS_SECRET_KEY_PROD}}
@@ -188,7 +188,7 @@ jobs:
 
       - name: Health check
         env:
-          HEROKU_APP: security-manager-server-prod
+          HEROKU_APP: security-manager-prod
         run: |
           sleep 90
           curl -sSf https://${HEROKU_APP}.herokuapp.com/actuator/health >> /dev/null
@@ -198,7 +198,7 @@ jobs:
         if: ${{always()}}
         env:
           SLACK_COLOR: ${{job.status}}
-          SLACK_TITLE: security-manager-server-prod
+          SLACK_TITLE: security-manager-prod
           SLACK_MESSAGE: Heroku Deployment in PROD
           MSG_MINIMAL: true
           SLACK_WEBHOOK: ${{secrets.SLACK_WEBHOOK_URL}}

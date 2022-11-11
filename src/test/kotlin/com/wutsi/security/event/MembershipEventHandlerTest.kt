@@ -13,6 +13,7 @@ import com.wutsi.platform.core.stream.Event
 import com.wutsi.security.dto.CreateOTPRequest
 import com.wutsi.security.dto.CreatePasswordRequest
 import com.wutsi.security.entity.OtpEntity
+import com.wutsi.security.entity.PasswordEntity
 import com.wutsi.security.service.OtpService
 import com.wutsi.security.service.PasswordService
 import org.junit.jupiter.api.Test
@@ -79,6 +80,10 @@ internal class MembershipEventHandlerTest {
 
     @Test
     fun onMemberRegistered() {
+        // GIVEN
+        val password = PasswordEntity(id = 34909)
+        doReturn(password).whenever(passwordService).create(any())
+
         // WHEN
         val payload = MemberEventPayload(
             phoneNumber = "+237670000010",
