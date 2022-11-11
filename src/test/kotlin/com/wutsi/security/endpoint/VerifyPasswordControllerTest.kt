@@ -28,7 +28,7 @@ class VerifyPasswordControllerTest {
         val request = VerifyPasswordRequest(
             value = "123"
         )
-        val response = rest.postForEntity(url(100), request, Any::class.java)
+        val response = rest.postForEntity(url(1), request, Any::class.java)
 
         // THEN
         assertEquals(HttpStatus.OK, response.statusCode)
@@ -41,7 +41,7 @@ class VerifyPasswordControllerTest {
             value = "this is an invalid password"
         )
         val ex = assertThrows<HttpClientErrorException> {
-            rest.postForEntity(url(100), request, Any::class.java)
+            rest.postForEntity(url(1), request, Any::class.java)
         }
 
         // THEN

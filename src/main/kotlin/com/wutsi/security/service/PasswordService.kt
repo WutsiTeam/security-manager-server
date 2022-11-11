@@ -41,7 +41,7 @@ class PasswordService(
 
     fun verify(id: Long, request: VerifyPasswordRequest) {
         val password = findById(id)
-        val value = hash(password.id!!, request.value, password.salt)
+        val value = hash(password.accountId, request.value, password.salt)
         if (value != password.value) {
             throw ConflictException(
                 error = Error(
