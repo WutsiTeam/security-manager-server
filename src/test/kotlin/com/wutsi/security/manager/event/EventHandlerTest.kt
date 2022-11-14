@@ -22,23 +22,6 @@ internal class EventHandlerTest {
     private lateinit var mapper: ObjectMapper
 
     @Test
-    fun onRegistrationStarted() {
-        // WHEN
-        val event = Event(
-            type = EventURN.MEMBER_REGISTRATION_STARTED.urn,
-            payload = mapper.writeValueAsString(
-                MemberEventPayload(
-                    phoneNumber = "+237670000010"
-                )
-            )
-        )
-        handler.handleEvent(event)
-
-        // THEN
-        verify(membership).onRegistrationStarted(event)
-    }
-
-    @Test
     fun onMemberRegistered() {
         // WHEN
         val event = Event(
