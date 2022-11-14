@@ -5,6 +5,7 @@ import com.wutsi.platform.core.error.Parameter
 import com.wutsi.platform.core.error.ParameterType
 import com.wutsi.platform.core.error.exception.BadRequestException
 import com.wutsi.platform.core.error.exception.ConflictException
+import com.wutsi.platform.core.logging.KVLogger
 import com.wutsi.platform.core.messaging.Message
 import com.wutsi.platform.core.messaging.MessagingService
 import com.wutsi.platform.core.messaging.MessagingServiceProvider
@@ -27,7 +28,8 @@ import javax.annotation.PostConstruct
 public class OtpService(
     private val dao: com.wutsi.security.manager.dao.OtpRepository,
     private val messagingProvider: MessagingServiceProvider,
-    private val messageSource: MessageSource
+    private val messageSource: MessageSource,
+    private val logger: KVLogger
 ) {
     companion object {
         private val LOGGER = LoggerFactory.getLogger(OtpService::class.java)
@@ -54,11 +56,12 @@ public class OtpService(
 
         // Send
         if (isTestAddress(request.address)) { // Never send SMS to test addresses
+            logger.add("test_address", true)
             return otp
         }
 
         val locale = LocaleContextHolder.getLocale()
-        getMessaging(request).send(
+        val messageId = getMessaging(request).send(
             Message(
                 recipient = Party(
                     phoneNumber = request.address,
@@ -77,6 +80,7 @@ public class OtpService(
                 )
             )
         )
+        logger.add("message_id", messageId)
 
         return otp
     }
@@ -99,7 +103,10 @@ public class OtpService(
             )
         }
 
-        if (!isTestAddress(otp.address) && otp.code != request.code) {
+        logger.add("test_address", otp.address)
+        if (isTestAddress(otp.address)) {
+            logger.add("test_address", true)
+        } else if (otp.code != request.code) {
             throw ConflictException(
                 error = Error(
                     code = ErrorURN.OTP_NOT_VALID.urn
