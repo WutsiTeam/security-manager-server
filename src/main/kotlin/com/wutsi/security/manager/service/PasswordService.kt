@@ -14,7 +14,6 @@ import com.wutsi.security.manager.error.ErrorURN
 import org.apache.commons.codec.digest.DigestUtils
 import org.springframework.stereotype.Service
 import java.util.Date
-import java.util.Optional
 import java.util.UUID
 
 @Service
@@ -39,8 +38,8 @@ class PasswordService(
         dao.save(password)
     }
 
-    fun verify(id: Long, request: VerifyPasswordRequest) {
-        val password = findById(id)
+    fun verify(request: VerifyPasswordRequest): PasswordEntity {
+        val password = findByUsername(request.username)
         val value = hash(password.accountId, request.value, password.salt)
         if (value != password.value) {
             throw ConflictException(
@@ -49,6 +48,7 @@ class PasswordService(
                 )
             )
         }
+        return password
     }
 
     fun delete(id: Long) {
@@ -84,12 +84,19 @@ class PasswordService(
         return password
     }
 
-    fun findByUsername(username: String): Optional<PasswordEntity> {
+    fun findByUsername(username: String): PasswordEntity {
         val passwords = dao.findByUsernameAndIsDeleted(username, false)
-        return if (passwords.isEmpty()) {
-            Optional.empty()
+        if (passwords.isEmpty()) {
+            throw NotFoundException(
+                error = Error(
+                    code = ErrorURN.PASSWORD_NOT_FOUND.urn,
+                    data = mapOf(
+                        "username" to username
+                    )
+                )
+            )
         } else {
-            Optional.of(passwords[0])
+            return passwords[0]
         }
     }
 

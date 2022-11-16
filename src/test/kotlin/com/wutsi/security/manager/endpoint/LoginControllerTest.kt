@@ -18,6 +18,7 @@ import com.wutsi.platform.core.security.spring.jwt.JWTBuilder
 import com.wutsi.security.manager.dto.LoginRequest
 import com.wutsi.security.manager.dto.LoginResponse
 import com.wutsi.security.manager.entity.OtpEntity
+import com.wutsi.security.manager.enums.LoginType
 import com.wutsi.security.manager.error.ErrorURN
 import com.wutsi.security.manager.service.LoginService
 import org.junit.jupiter.api.BeforeEach
@@ -67,7 +68,8 @@ class LoginControllerTest {
     fun `send MFA token`() {
         // WHEN
         val request = LoginRequest(
-            phoneNumber = "+1237670000000"
+            username = "+1237670000000",
+            type = LoginType.MFA.name
         )
         val ex = assertThrows<HttpClientErrorException> {
             rest.postForEntity(url(), request, LoginResponse::class.java)
@@ -81,19 +83,20 @@ class LoginControllerTest {
 
         val msg = argumentCaptor<Message>()
         verify(messaging).send(msg.capture())
-        assertEquals(request.phoneNumber, msg.firstValue.recipient.phoneNumber)
+        assertEquals(request.username, msg.firstValue.recipient.phoneNumber)
 
         val token = response.error.data!!["mfaToken"].toString()
         val otp = otpDao.findById(token)
         assertTrue(otp.isPresent)
-        assertEquals(request.phoneNumber, otp.get().address)
+        assertEquals(request.username, otp.get().address)
     }
 
     @Test
     fun `dont send MFA token to deleted account`() {
         // WHEN
         val request = LoginRequest(
-            phoneNumber = "+1237670000099"
+            username = "+1237670000099",
+            type = LoginType.MFA.name
         )
         val ex = assertThrows<HttpClientErrorException> {
             rest.postForEntity(url(), request, LoginResponse::class.java)
@@ -110,7 +113,8 @@ class LoginControllerTest {
     fun `dont send MFA token to invalid account`() {
         // WHEN
         val request = LoginRequest(
-            phoneNumber = "invalid-account"
+            username = "invalid-account",
+            type = LoginType.MFA.name
         )
         val ex = assertThrows<HttpClientErrorException> {
             rest.postForEntity(url(), request, LoginResponse::class.java)
@@ -124,7 +128,7 @@ class LoginControllerTest {
     }
 
     @Test
-    fun `authentication`() {
+    fun `MFA authentication`() {
         // GIVEN
         val otp = OtpEntity(
             token = UUID.randomUUID().toString(),
@@ -137,7 +141,9 @@ class LoginControllerTest {
         // WHEN
         val request = LoginRequest(
             mfaToken = otp.token,
-            verificationCode = otp.code
+            verificationCode = otp.code,
+            type = LoginType.MFA.name,
+            username = otp.address
         )
         val response = rest.postForEntity(url(), request, LoginResponse::class.java)
 
@@ -166,7 +172,7 @@ class LoginControllerTest {
     }
 
     @Test
-    fun `authentication fails with invalid code`() {
+    fun `MFA authentication fails with invalid code`() {
         // GIVEN
         val otp = OtpEntity(
             token = UUID.randomUUID().toString(),
@@ -179,7 +185,9 @@ class LoginControllerTest {
         // WHEN
         val request = LoginRequest(
             mfaToken = otp.token,
-            verificationCode = "this-is-an-invalid-code"
+            verificationCode = "this-is-an-invalid-code",
+            type = LoginType.MFA.name,
+            username = otp.address
         )
         val ex = assertThrows<HttpClientErrorException> {
             rest.postForEntity(url(), request, LoginResponse::class.java)
@@ -190,6 +198,78 @@ class LoginControllerTest {
 
         val response = ObjectMapper().readValue(ex.responseBodyAsString, ErrorResponse::class.java)
         assertEquals(ErrorURN.OTP_NOT_VALID.urn, response.error.code)
+    }
+
+    @Test
+    fun `Password authentication`() {
+        // WHEN
+        val request = LoginRequest(
+            type = LoginType.PASSWORD.name,
+            username = "+1237670000000",
+            password = "123"
+        )
+        val response = rest.postForEntity(url(), request, LoginResponse::class.java)
+
+        // THEN
+        assertEquals(HttpStatus.OK, response.statusCode)
+
+        val accessToken = response.body?.accessToken
+        assertNotNull(accessToken)
+        val decoded = JWT.decode(accessToken)
+        assertEquals("100", decoded.subject)
+        assertNotNull(decoded.keyId)
+        assertEquals(SubjectType.USER.name, decoded.claims[JWTBuilder.CLAIM_SUBJECT_TYPE]?.asString())
+        assertEquals(request.username, decoded.claims[JWTBuilder.CLAIM_NAME]?.asString())
+        assertEquals(
+            LoginService.USER_TOKEN_TTL_MILLIS / 60000,
+            (decoded.expiresAt.time - decoded.issuedAt.time) / 60000
+        )
+
+        val login = loginService.findByAccessToken(accessToken)
+        assertTrue(login.isPresent)
+        assertEquals(100L, login.get().accountId)
+        assertNotNull(login.get().expires)
+        assertNotNull(login.get().created)
+        assertNull(login.get().expired)
+        assertEquals(accessToken, login.get().accessToken)
+    }
+
+    @Test
+    fun `Password authentication fails with invalid password`() {
+        // WHEN
+        val request = LoginRequest(
+            type = LoginType.PASSWORD.name,
+            username = "+1237670000000",
+            password = "invalid password"
+        )
+        val ex = assertThrows<HttpClientErrorException> {
+            rest.postForEntity(url(), request, LoginResponse::class.java)
+        }
+
+        // THEN
+        assertEquals(HttpStatus.CONFLICT, ex.statusCode)
+
+        val response = ObjectMapper().readValue(ex.responseBodyAsString, ErrorResponse::class.java)
+        assertEquals(ErrorURN.PASSWORD_MISMATCH.urn, response.error.code)
+    }
+
+    @Test
+    fun `invalid login type`() {
+        // WHEN
+        val request = LoginRequest(
+            type = "xxxx??",
+            username = "+1237670000000",
+            password = "123"
+        )
+        val ex = assertThrows<HttpClientErrorException> {
+            rest.postForEntity(url(), request, LoginResponse::class.java)
+        }
+
+        // THEN
+        assertEquals(HttpStatus.BAD_REQUEST, ex.statusCode)
+
+        val response = ObjectMapper().readValue(ex.responseBodyAsString, ErrorResponse::class.java)
+        assertEquals(ErrorURN.LOGIN_TYPE_NOT_SUPPORTED.urn, response.error.code)
     }
 
     private fun url() = "http://localhost:$port/v1/auth"

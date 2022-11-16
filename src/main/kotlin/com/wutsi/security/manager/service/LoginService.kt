@@ -2,9 +2,10 @@ package com.wutsi.security.manager.service
 
 import com.auth0.jwt.JWT
 import com.wutsi.platform.core.error.Error
-import com.wutsi.platform.core.error.exception.ConflictException
+import com.wutsi.platform.core.error.Parameter
+import com.wutsi.platform.core.error.ParameterType
+import com.wutsi.platform.core.error.exception.BadRequestException
 import com.wutsi.platform.core.error.exception.ForbiddenException
-import com.wutsi.platform.core.error.exception.NotFoundException
 import com.wutsi.platform.core.logging.DefaultKVLogger
 import com.wutsi.platform.core.messaging.MessagingType
 import com.wutsi.platform.core.security.SubjectType
@@ -13,9 +14,11 @@ import com.wutsi.platform.core.security.spring.jwt.JWTBuilder
 import com.wutsi.security.manager.dto.CreateOTPRequest
 import com.wutsi.security.manager.dto.LoginRequest
 import com.wutsi.security.manager.dto.VerifyOTPRequest
+import com.wutsi.security.manager.dto.VerifyPasswordRequest
 import com.wutsi.security.manager.entity.LoginEntity
 import com.wutsi.security.manager.entity.OtpEntity
 import com.wutsi.security.manager.entity.PasswordEntity
+import com.wutsi.security.manager.enums.LoginType
 import com.wutsi.security.manager.error.ErrorURN
 import org.apache.commons.codec.digest.DigestUtils
 import org.springframework.scheduling.annotation.Async
@@ -35,8 +38,24 @@ class LoginService(
         const val USER_TOKEN_TTL_MILLIS = 84600000L // 1 day
     }
 
-    fun login(request: LoginRequest): String {
-        if (request.mfaToken.isEmpty()) {
+    fun login(request: LoginRequest): String =
+        when (request.type) {
+            LoginType.MFA.name -> loginMFA(request)
+            LoginType.PASSWORD.name -> loginPassword(request)
+            else -> throw BadRequestException(
+                error = Error(
+                    code = ErrorURN.LOGIN_TYPE_NOT_SUPPORTED.urn,
+                    parameter = Parameter(
+                        name = "type",
+                        value = request.type,
+                        type = ParameterType.PARAMETER_TYPE_PAYLOAD
+                    )
+                )
+            )
+        }
+
+    private fun loginMFA(request: LoginRequest): String {
+        if (request.mfaToken.isNullOrEmpty()) {
             val otp = send(request)
             throw ForbiddenException(
                 error = Error(
@@ -49,6 +68,16 @@ class LoginService(
         } else {
             return verify(request)
         }
+    }
+
+    private fun loginPassword(request: LoginRequest): String {
+        val password = passwordService.verify(
+            VerifyPasswordRequest(
+                username = request.username,
+                value = request.password ?: ""
+            )
+        )
+        return createLogin(password).accessToken
     }
 
     fun logout(accessToken: String): LoginEntity? {
@@ -94,55 +123,36 @@ class LoginService(
     }
 
     private fun send(request: LoginRequest): OtpEntity {
-        val password = passwordService.findByUsername(request.phoneNumber)
-            .orElseThrow {
-                NotFoundException(
-                    error = Error(
-                        code = ErrorURN.PASSWORD_NOT_FOUND.urn
-                    )
-                )
-            }
+        val password = passwordService.findByUsername(request.username)
         val otpRequest = CreateOTPRequest(
             address = password.username,
             type = MessagingType.SMS.name
         )
-        val otp = otpService.create(otpRequest)
-
-        return otp
+        return otpService.create(otpRequest)
     }
 
     private fun verify(request: LoginRequest): String {
         val otp = otpService.verify(
-            token = request.mfaToken,
+            token = request.mfaToken!!,
             request = VerifyOTPRequest(
-                code = request.verificationCode
+                code = request.verificationCode ?: ""
             )
         )
 
         val password = passwordService.findByUsername(otp.address)
-            .orElseThrow {
-                ConflictException(
-                    error = Error(
-                        code = ErrorURN.PASSWORD_NOT_FOUND.urn
-                    )
-                )
-            }
+        return createLogin(password).accessToken
+    }
 
+    private fun createLogin(password: PasswordEntity): LoginEntity {
         val accessToken = JWTBuilder(
             ttl = USER_TOKEN_TTL_MILLIS,
             subjectType = SubjectType.USER,
-            name = otp.address,
+            name = password.username,
             subject = password.accountId.toString(),
             keyProvider = keyProvider
         ).build()
 
-        createLogin(accessToken, password)
-
-        return accessToken
-    }
-
-    private fun createLogin(accessToken: String, password: PasswordEntity) =
-        dao.save(
+        return dao.save(
             LoginEntity(
                 accountId = password.accountId,
                 hash = hash(accessToken),
@@ -151,6 +161,7 @@ class LoginService(
                 expires = Date(System.currentTimeMillis() + USER_TOKEN_TTL_MILLIS)
             )
         )
+    }
 
     fun hash(accessToken: String): String =
         DigestUtils.md5Hex(accessToken)

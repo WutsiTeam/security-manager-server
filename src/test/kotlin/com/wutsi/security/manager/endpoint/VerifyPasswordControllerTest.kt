@@ -26,9 +26,10 @@ class VerifyPasswordControllerTest {
     fun verify() {
         // WHEN
         val request = VerifyPasswordRequest(
+            username = "+1237670000000",
             value = "123"
         )
-        val response = rest.postForEntity(url(1), request, Any::class.java)
+        val response = rest.postForEntity(url(), request, Any::class.java)
 
         // THEN
         assertEquals(HttpStatus.OK, response.statusCode)
@@ -38,10 +39,11 @@ class VerifyPasswordControllerTest {
     fun mismatch() {
         // WHEN
         val request = VerifyPasswordRequest(
+            username = "+1237670000000",
             value = "this is an invalid password"
         )
         val ex = assertThrows<HttpClientErrorException> {
-            rest.postForEntity(url(1), request, Any::class.java)
+            rest.postForEntity(url(), request, Any::class.java)
         }
 
         // THEN
@@ -51,5 +53,5 @@ class VerifyPasswordControllerTest {
         assertEquals(ErrorURN.PASSWORD_MISMATCH.urn, response.error.code)
     }
 
-    private fun url(id: Long) = "http://localhost:$port/v1/passwords/$id/verify"
+    private fun url() = "http://localhost:$port/v1/passwords/verify"
 }

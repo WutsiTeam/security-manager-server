@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service
 
 @Service
 public class VerifyPasswordDelegate(val service: PasswordService) {
-    public fun invoke(id: Long, request: VerifyPasswordRequest) {
-        service.verify(id, request)
+    public fun invoke(request: VerifyPasswordRequest) {
+        service.verify(request)
     }
 }

@@ -120,18 +120,10 @@ paths:
       tags:
         - Password
 
-  /v1/passwords/{id}/verify:
+  /v1/passwords/verify:
     post:
       operationId: "verify-password"
       description: Verify a password
-      parameters:
-        - in: path
-          name: id
-          description: ID of the password
-          required: true
-          schema:
-            type: integer
-            format: int64
       requestBody:
         required: true
         content:
@@ -215,18 +207,32 @@ components:
     LoginRequest:
       type: object
       properties:
-        phoneNumber:
+        type:
           type: string
-          description: |
-            Phone number in the [E164](https://en.wikipedia.org/wiki/E.164) format.
+          enum:
+            - MFA
+            - PASSWORD
+        username:
+          type: string
+          description: Username
         mfaToken:
           type: string
           description: |
             Multi Factor Token. Must be provided for validating the verification code.
+          nullable: true
         verificationCode:
           type: string
           description: |
-            Verification code. REQUIRED when `mfaToken` is provided
+            Verification code. REQUIRED when `type=MFA AND mfaToken != null` is provided
+          nullable: true
+        password:
+          type: string
+          description: |
+            Password. REQUIRED when `type=PASSWORD`
+          nullable: true
+      required:
+        - type
+        - username
 
     LoginResponse:
       type: object
@@ -318,7 +324,11 @@ components:
     VerifyPasswordRequest:
       type: object
       properties:
+        username:
+          type: string
+          maxLength: 30
         value:
           type: string
       required:
+        - username
         - value
