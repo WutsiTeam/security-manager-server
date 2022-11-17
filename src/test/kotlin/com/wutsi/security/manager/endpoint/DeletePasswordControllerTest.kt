@@ -6,25 +6,22 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.test.context.jdbc.Sql
-import org.springframework.web.client.RestTemplate
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Sql(value = ["/db/clean.sql", "/db/DeletePasswordController.sql"])
-public class DeletePasswordControllerTest {
+public class DeletePasswordControllerTest : AbstractSecuredControllerTest() {
     @LocalServerPort
     public val port: Int = 0
 
     @Autowired
     private lateinit var dao: PasswordRepository
 
-    protected val rest = RestTemplate()
-
     @Test
-    fun update() {
+    fun delete() {
         // WHEN
-        rest.delete(url(100))
+        rest.delete(url())
 
         // THEN
         val password = dao.findById(100).get()
@@ -34,12 +31,12 @@ public class DeletePasswordControllerTest {
 
     @Test
     fun notFound() {
-        rest.delete(url(99999))
+        createRestTemplate(99999).delete(url())
     }
 
     @Test
     fun deleted() {
-        rest.delete(url(999))
+        createRestTemplate(999).delete(url())
 
         // THEN
         val password = dao.findById(999).get()
@@ -47,5 +44,5 @@ public class DeletePasswordControllerTest {
         assertNotNull(password.deleted)
     }
 
-    private fun url(id: Long) = "http://localhost:$port/v1/passwords/$id"
+    private fun url() = "http://localhost:$port/v1/passwords/"
 }

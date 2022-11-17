@@ -72,6 +72,6 @@ internal class MembershipEventHandlerTest {
         handler.onMemberDeleted(event)
 
         // THEN
-        verify(passwordService).deleteByAccountId(payload.accountId)
+        verify(passwordService).delete(payload.accountId)
     }
 }

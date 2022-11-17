@@ -56,7 +56,7 @@ class MembershipEventHandler(
         val payload = toMemberPayload(event)
         log(payload)
 
-        passwordService.deleteByAccountId(payload.accountId)
+        passwordService.delete(payload.accountId)
     }
 
     private fun toMemberPayload(event: Event): MemberEventPayload =

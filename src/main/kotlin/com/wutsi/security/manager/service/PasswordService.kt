@@ -1,8 +1,6 @@
 package com.wutsi.security.manager.service
 
 import com.wutsi.platform.core.error.Error
-import com.wutsi.platform.core.error.Parameter
-import com.wutsi.platform.core.error.ParameterType
 import com.wutsi.platform.core.error.exception.ConflictException
 import com.wutsi.platform.core.error.exception.NotFoundException
 import com.wutsi.security.manager.dao.PasswordRepository
@@ -32,14 +30,14 @@ class PasswordService(
         )
     }
 
-    fun update(id: Long, request: UpdatePasswordRequest) {
-        val password = findById(id)
+    fun update(accountId: Long, request: UpdatePasswordRequest) {
+        val password = findByAccountId(accountId)
         password.value = hash(password.accountId, request.value, password.salt)
         dao.save(password)
     }
 
-    fun verify(request: VerifyPasswordRequest): PasswordEntity {
-        val password = findByUsername(request.username)
+    fun verify(accountId: Long, request: VerifyPasswordRequest): PasswordEntity {
+        val password = findByAccountId(accountId)
         val value = hash(password.accountId, request.value, password.salt)
         if (value != password.value) {
             throw ConflictException(
@@ -51,14 +49,7 @@ class PasswordService(
         return password
     }
 
-    fun delete(id: Long) {
-        val password = dao.findById(id)
-        if (password.isPresent) {
-            delete(password.get())
-        }
-    }
-
-    fun deleteByAccountId(accountId: Long) {
+    fun delete(accountId: Long) {
         val password = dao.findByAccountIdAndIsDeleted(accountId, false)
         password.forEach {
             delete(it)
@@ -73,15 +64,19 @@ class PasswordService(
         }
     }
 
-    fun findById(id: Long): PasswordEntity {
-        val password = dao.findById(id)
-            .orElseThrow {
-                notFound(id)
-            }
-        if (password.isDeleted) {
-            throw notFound(id)
+    fun findByAccountId(accountId: Long): PasswordEntity {
+        val passwords = dao.findByAccountIdAndIsDeleted(accountId, false)
+        if (passwords.isEmpty()) {
+            throw NotFoundException(
+                error = Error(
+                    code = ErrorURN.PASSWORD_NOT_FOUND.urn,
+                    data = mapOf(
+                        "account-id" to accountId
+                    )
+                )
+            )
         }
-        return password
+        return passwords[0]
     }
 
     fun findByUsername(username: String): PasswordEntity {
@@ -99,17 +94,6 @@ class PasswordService(
             return passwords[0]
         }
     }
-
-    private fun notFound(id: Long) = NotFoundException(
-        error = Error(
-            code = ErrorURN.PASSWORD_NOT_FOUND.urn,
-            parameter = Parameter(
-                name = "id",
-                type = ParameterType.PARAMETER_TYPE_PATH,
-                value = id.toString()
-            )
-        )
-    )
 
     private fun hash(accountId: Long, value: String, salt: String): String =
         DigestUtils.md5Hex("$accountId-$value-$salt")

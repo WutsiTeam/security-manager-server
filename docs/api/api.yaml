@@ -78,17 +78,8 @@ paths:
       tags:
         - Password
 
-  /v1/passwords/{id}:
-    post:
+    put:
       operationId: "update-password"
-      parameters:
-        - in: path
-          name: id
-          description: Password ID
-          required: true
-          schema:
-            type: integer
-            format: int64
       requestBody:
         required: true
         content:
@@ -102,23 +93,18 @@ paths:
           description: Validation failed failed
       tags:
         - Password
+      security:
+        - api_key: []
 
     delete:
       operationId: "delete-password"
-      parameters:
-        - in: path
-          name: id
-          description: ID of the password
-          required: true
-          schema:
-            type: integer
-            format: int64
-      description: Delete a password account
       responses:
         200:
           description: Success
       tags:
         - Password
+      security:
+        - api_key: []
 
   /v1/passwords/verify:
     post:
@@ -135,6 +121,8 @@ paths:
           description: Success
       tags:
         - Password
+      security:
+        - api_key: []
 
 
 
@@ -196,6 +184,12 @@ paths:
 
 
 components:
+  securitySchemes:
+    api_key:
+      type: apiKey
+      in: header
+      name: Authorization
+
   schemas:
     GetKeyResponse:
       type: object
@@ -294,14 +288,15 @@ components:
     CreatePasswordRequest:
       type: object
       properties:
-        value:
-          type: string
         accountId:
           type: integer
           format: int64
         username:
           type: string
           maxLength: 30
+        value:
+          type: string
+          description: Password value
       required:
         - value
         - username
@@ -324,11 +319,7 @@ components:
     VerifyPasswordRequest:
       type: object
       properties:
-        username:
-          type: string
-          maxLength: 30
         value:
           type: string
       required:
-        - username
         - value

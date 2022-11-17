@@ -81,8 +81,15 @@ wutsi:
       test-addresses: [ ]
   platform:
     security:
-      type: none
+      type: jwt
       api-key: "---- none -----"
+      public-endpoints:
+        - "POST /v1/auth"
+        - "POST /v1/auth/**"
+        - "POST /v1/otp"
+        - "POST /v1/otp/**"
+        - "POST /v1/passwords"
+        - "GET /v1/keys/*"
     cache:
       name: ${wutsi.application.name}
       type: local

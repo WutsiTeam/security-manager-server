@@ -6,7 +6,6 @@ import com.wutsi.platform.core.error.Parameter
 import com.wutsi.platform.core.error.ParameterType
 import com.wutsi.platform.core.error.exception.BadRequestException
 import com.wutsi.platform.core.error.exception.ForbiddenException
-import com.wutsi.platform.core.logging.DefaultKVLogger
 import com.wutsi.platform.core.messaging.MessagingType
 import com.wutsi.platform.core.security.SubjectType
 import com.wutsi.platform.core.security.TokenBlacklistService
@@ -21,7 +20,6 @@ import com.wutsi.security.manager.entity.PasswordEntity
 import com.wutsi.security.manager.enums.LoginType
 import com.wutsi.security.manager.error.ErrorURN
 import org.apache.commons.codec.digest.DigestUtils
-import org.springframework.scheduling.annotation.Async
 import org.springframework.stereotype.Service
 import java.util.Date
 import java.util.Optional
@@ -71,42 +69,25 @@ class LoginService(
     }
 
     private fun loginPassword(request: LoginRequest): String {
-        val password = passwordService.verify(
-            VerifyPasswordRequest(
-                username = request.username,
+        val password = passwordService.findByUsername(request.username)
+        passwordService.verify(
+            accountId = password.accountId,
+            request = VerifyPasswordRequest(
                 value = request.password ?: ""
             )
         )
         return createLogin(password).accessToken
     }
 
-    fun logout(accessToken: String): LoginEntity? {
-        val login = findByAccessToken(accessToken).orElse(null) ?: return null
-        return logout(login)
+    fun logout(accountId: Long) {
+        val logins = dao.findByAccountIdAndExpiredIsNull(accountId)
+        logins.forEach {
+            logout(it)
+        }
     }
 
     fun findByAccessToken(accessToken: String): Optional<LoginEntity> =
         dao.findByHash(hash(accessToken))
-
-    @Async
-    fun logoutPreviousSession(login: LoginEntity, traceId: String) {
-        val logger = DefaultKVLogger()
-        var count = 0
-        try {
-            val logins = dao.findByAccountIdAndExpiredIsNull(login.accountId)
-            logins.forEach {
-                if (it.id != login.id) {
-                    logout(it)
-                    count++
-                }
-            }
-        } finally {
-            logger.add("trace_id", traceId)
-            logger.add("account_id", login.accountId)
-            logger.add("additional_logout_count", count)
-            logger.log()
-        }
-    }
 
     private fun logout(login: LoginEntity): LoginEntity {
         // Expire

@@ -13,19 +13,16 @@ import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.HttpStatus
 import org.springframework.test.context.jdbc.Sql
 import org.springframework.web.client.HttpClientErrorException
-import org.springframework.web.client.RestTemplate
 import kotlin.test.assertEquals
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @Sql(value = ["/db/clean.sql", "/db/UpdatePasswordController.sql"])
-class UpdatePasswordControllerTest {
+class UpdatePasswordControllerTest : AbstractSecuredControllerTest() {
     @LocalServerPort
     val port: Int = 0
 
     @Autowired
     private lateinit var dao: PasswordRepository
-
-    protected val rest = RestTemplate()
 
     @Test
     fun update() {
@@ -33,10 +30,9 @@ class UpdatePasswordControllerTest {
         val request = UpdatePasswordRequest(
             value = "123"
         )
-        val response = rest.postForEntity(url(100), request, Any::class.java)
+        rest.put(url(), request)
 
         // THEN
-        assertEquals(HttpStatus.OK, response.statusCode)
 
         val password = dao.findById(100).get()
         assertEquals(32, password.value.length)
@@ -49,7 +45,8 @@ class UpdatePasswordControllerTest {
             value = "123"
         )
         val ex = assertThrows<HttpClientErrorException> {
-            rest.postForEntity(url(999999), request, Any::class.java)
+            rest = createRestTemplate(999999)
+            rest.put(url(), request)
         }
 
         // THEN
@@ -66,7 +63,8 @@ class UpdatePasswordControllerTest {
             value = "123"
         )
         val ex = assertThrows<HttpClientErrorException> {
-            rest.postForEntity(url(999), request, Any::class.java)
+            rest = createRestTemplate(999)
+            rest.put(url(), request)
         }
 
         // THEN
@@ -76,5 +74,5 @@ class UpdatePasswordControllerTest {
         assertEquals(ErrorURN.PASSWORD_NOT_FOUND.urn, response.error.code)
     }
 
-    private fun url(id: Long) = "http://localhost:$port/v1/passwords/$id"
+    private fun url() = "http://localhost:$port/v1/passwords"
 }
