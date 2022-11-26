@@ -35,7 +35,7 @@
     <flyway.version>9.3.0</flyway.version>
 
     <wutsi-platform-core.version>0.0.188</wutsi-platform-core.version>
-    <membership-manager.version>1.0.11</membership-manager.version>
+    <wutsi-events.version>1.0.0</wutsi-events.version>
   </properties>
 
   <dependencies>
@@ -45,9 +45,9 @@
       <version>${wutsi-platform-core.version}</version>
     </dependency>
     <dependency>
-      <groupId>com.wutsi.membership.manager</groupId>
-      <artifactId>membership-manager-sdk-kotlin</artifactId>
-      <version>${membership-manager.version}</version>
+      <groupId>com.wutsi</groupId>
+      <artifactId>wutsi-events</artifactId>
+      <version>${wutsi-events.version}</version>
     </dependency>
 
     <dependency>

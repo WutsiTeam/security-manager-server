@@ -5,8 +5,8 @@ import com.nhaarman.mockitokotlin2.any
 import com.nhaarman.mockitokotlin2.doReturn
 import com.nhaarman.mockitokotlin2.verify
 import com.nhaarman.mockitokotlin2.whenever
-import com.wutsi.membership.manager.event.EventURN
-import com.wutsi.membership.manager.event.MemberEventPayload
+import com.wutsi.event.EventURN
+import com.wutsi.event.MemberEventPayload
 import com.wutsi.platform.core.stream.Event
 import com.wutsi.security.manager.dto.CreatePasswordRequest
 import com.wutsi.security.manager.entity.PasswordEntity
