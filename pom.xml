@@ -34,8 +34,8 @@
     <mysql.version>8.0.31</mysql.version>
     <flyway.version>9.3.0</flyway.version>
 
-    <wutsi-platform-core.version>0.0.188</wutsi-platform-core.version>
-    <wutsi-events.version>1.0.8</wutsi-events.version>
+    <wutsi-platform-core.version>0.0.191</wutsi-platform-core.version>
+    <wutsi-events.version>1.0.13</wutsi-events.version>
   </properties>
 
   <dependencies>

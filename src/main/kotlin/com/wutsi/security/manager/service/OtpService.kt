@@ -103,7 +103,6 @@ public class OtpService(
             )
         }
 
-        logger.add("test_address", otp.address)
         if (isTestAddress(otp.address)) {
             logger.add("test_address", true)
         } else if (otp.code != request.code) {

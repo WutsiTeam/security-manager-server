@@ -16,7 +16,9 @@ public class CreateOtpDelegate(
         logger.add("request_type", request.type)
 
         val otp = service.create(request)
-        logger.add("token", otp.token)
+        logger.add("response_token", otp.token)
+        logger.add("response_code", otp.code)
+        logger.add("response_expires", otp.expires)
         return CreateOTPResponse(
             token = otp.token
         )
