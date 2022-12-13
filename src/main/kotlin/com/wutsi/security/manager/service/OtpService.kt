@@ -103,12 +103,15 @@ public class OtpService(
             )
         }
 
-        if (isTestAddress(otp.address)) {
-            logger.add("test_address", true)
-        } else if (otp.code != request.code) {
+        logger.add("test_address", isTestAddress(otp.address))
+        if (otp.code != request.code) {
             throw ConflictException(
                 error = Error(
-                    code = ErrorURN.OTP_NOT_VALID.urn
+                    code = ErrorURN.OTP_NOT_VALID.urn,
+                    data = mapOf(
+                        "otp-code" to otp.code,
+                        "request-code" to request.code
+                    )
                 )
             )
         }
