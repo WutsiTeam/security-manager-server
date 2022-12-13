@@ -103,8 +103,11 @@ public class OtpService(
             )
         }
 
-        logger.add("test_address", isTestAddress(otp.address))
-        if (otp.code != request.code) {
+        val test = isTestAddress(otp.address)
+        logger.add("test_address", test)
+        if (test) {
+            // Done
+        } else if (otp.code != request.code) {
             throw ConflictException(
                 error = Error(
                     code = ErrorURN.OTP_NOT_VALID.urn,
