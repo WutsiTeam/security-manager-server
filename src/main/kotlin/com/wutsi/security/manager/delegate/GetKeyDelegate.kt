@@ -13,8 +13,8 @@ public class GetKeyDelegate(private val service: KeyService) {
             key = Key(
                 id = key.id!!,
                 algorithm = key.algorithm,
-                content = key.publicKey
-            )
+                content = key.publicKey,
+            ),
         )
     }
 }

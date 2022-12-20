@@ -28,7 +28,7 @@ class UpdatePasswordControllerTest : AbstractSecuredControllerTest() {
     fun update() {
         // WHEN
         val request = UpdatePasswordRequest(
-            value = "123"
+            value = "123",
         )
         rest.put(url(), request)
 
@@ -42,7 +42,7 @@ class UpdatePasswordControllerTest : AbstractSecuredControllerTest() {
     fun notFound() {
         // WHEN
         val request = UpdatePasswordRequest(
-            value = "123"
+            value = "123",
         )
         val ex = assertThrows<HttpClientErrorException> {
             rest = createRestTemplate(999999)
@@ -60,7 +60,7 @@ class UpdatePasswordControllerTest : AbstractSecuredControllerTest() {
     fun deleted() {
         // WHEN
         val request = UpdatePasswordRequest(
-            value = "123"
+            value = "123",
         )
         val ex = assertThrows<HttpClientErrorException> {
             rest = createRestTemplate(999)

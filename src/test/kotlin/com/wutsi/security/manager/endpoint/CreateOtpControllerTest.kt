@@ -67,7 +67,7 @@ class CreateOtpControllerTest {
         // WHEN
         val request = CreateOTPRequest(
             type = MessagingType.SMS.name,
-            address = "+23799505678"
+            address = "+23799505678",
         )
         val response = rest.postForEntity(url(), request, CreateOTPResponse::class.java)
 
@@ -99,7 +99,7 @@ class CreateOtpControllerTest {
         // WHEN
         val request = CreateOTPRequest(
             type = MessagingType.PUSH_NOTIFICATION.name,
-            address = UUID.randomUUID().toString()
+            address = UUID.randomUUID().toString(),
         )
         val response = rest.postForEntity(url(), request, CreateOTPResponse::class.java)
 
@@ -130,7 +130,7 @@ class CreateOtpControllerTest {
         // WHEN
         val request = CreateOTPRequest(
             type = MessagingType.EMAIL.name,
-            address = "roger.milla@gmail.com"
+            address = "roger.milla@gmail.com",
         )
         val response = rest.postForEntity(url(), request, CreateOTPResponse::class.java)
 
@@ -162,7 +162,7 @@ class CreateOtpControllerTest {
         // WHEN
         val request = CreateOTPRequest(
             type = MessagingType.WHATSTAPP.name,
-            address = "+23799505678"
+            address = "+23799505678",
         )
         val response = rest.postForEntity(url(), request, CreateOTPResponse::class.java)
 
@@ -190,7 +190,7 @@ class CreateOtpControllerTest {
         // WHEN
         val request = CreateOTPRequest(
             type = "bad-address-type",
-            address = "+23799505678"
+            address = "+23799505678",
         )
         val ex = assertThrows<HttpClientErrorException> {
             rest.postForEntity(url(), request, CreateOTPResponse::class.java)
@@ -209,7 +209,7 @@ class CreateOtpControllerTest {
         val now = System.currentTimeMillis()
         val request = CreateOTPRequest(
             type = "bad-address-type",
-            address = "+23799505678"
+            address = "+23799505678",
         )
         service.testAddresses = mutableListOf(request.address)
         val response = rest.postForEntity(url(), request, CreateOTPResponse::class.java)

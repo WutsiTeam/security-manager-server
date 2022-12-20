@@ -8,11 +8,11 @@ import javax.transaction.Transactional
 
 @Service
 public class CreatePasswordDelegate(
-    private val service: PasswordService
+    private val service: PasswordService,
 ) {
     @Transactional
     public fun invoke(request: CreatePasswordRequest) =
         CreatePasswordResponse(
-            passwordId = service.create(request).id!!
+            passwordId = service.create(request).id!!,
         )
 }

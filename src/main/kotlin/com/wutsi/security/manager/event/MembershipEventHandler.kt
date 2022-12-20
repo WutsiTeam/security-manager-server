@@ -15,7 +15,7 @@ class MembershipEventHandler(
     private val otpService: OtpService,
     private val passwordService: PasswordService,
     private val mapper: ObjectMapper,
-    private val logger: KVLogger
+    private val logger: KVLogger,
 ) {
     @Transactional
     fun onMemberRegistered(event: Event) {
@@ -26,8 +26,8 @@ class MembershipEventHandler(
             CreatePasswordRequest(
                 accountId = payload.accountId,
                 username = payload.phoneNumber,
-                value = payload.pin!!
-            )
+                value = payload.pin!!,
+            ),
         )
         logger.add("password_id", password.id)
     }

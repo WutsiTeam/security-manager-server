@@ -30,7 +30,7 @@ class LoginService(
     private val passwordService: PasswordService,
     private val keyProvider: RSAKeyProviderImpl,
     private val blacklistService: TokenBlacklistService,
-    private val dao: com.wutsi.security.manager.dao.LoginRepository
+    private val dao: com.wutsi.security.manager.dao.LoginRepository,
 ) {
     companion object {
         const val USER_TOKEN_TTL_MILLIS = 84600000L // 1 day
@@ -46,9 +46,9 @@ class LoginService(
                     parameter = Parameter(
                         name = "type",
                         value = request.type,
-                        type = ParameterType.PARAMETER_TYPE_PAYLOAD
-                    )
-                )
+                        type = ParameterType.PARAMETER_TYPE_PAYLOAD,
+                    ),
+                ),
             )
         }
 
@@ -59,9 +59,9 @@ class LoginService(
                 error = Error(
                     code = ErrorURN.AUTHENTICATION_MFA_REQUIRED.urn,
                     data = mapOf(
-                        "mfaToken" to otp.token
-                    )
-                )
+                        "mfaToken" to otp.token,
+                    ),
+                ),
             )
         } else {
             return verify(request)
@@ -73,8 +73,8 @@ class LoginService(
         passwordService.verify(
             accountId = password.accountId,
             request = VerifyPasswordRequest(
-                value = request.password ?: ""
-            )
+                value = request.password ?: "",
+            ),
         )
         return createLogin(password).accessToken
     }
@@ -107,7 +107,7 @@ class LoginService(
         val password = passwordService.findByUsername(request.username)
         val otpRequest = CreateOTPRequest(
             address = password.username,
-            type = MessagingType.SMS.name
+            type = MessagingType.SMS.name,
         )
         return otpService.create(otpRequest)
     }
@@ -116,8 +116,8 @@ class LoginService(
         val otp = otpService.verify(
             token = request.mfaToken!!,
             request = VerifyOTPRequest(
-                code = request.verificationCode ?: ""
-            )
+                code = request.verificationCode ?: "",
+            ),
         )
 
         val password = passwordService.findByUsername(otp.address)
@@ -130,7 +130,7 @@ class LoginService(
             subjectType = SubjectType.USER,
             name = password.username,
             subject = password.accountId.toString(),
-            keyProvider = keyProvider
+            keyProvider = keyProvider,
         ).build()
 
         return dao.save(
@@ -139,8 +139,8 @@ class LoginService(
                 hash = hash(accessToken),
                 accessToken = accessToken,
                 created = Date(),
-                expires = Date(System.currentTimeMillis() + USER_TOKEN_TTL_MILLIS)
-            )
+                expires = Date(System.currentTimeMillis() + USER_TOKEN_TTL_MILLIS),
+            ),
         )
     }
 

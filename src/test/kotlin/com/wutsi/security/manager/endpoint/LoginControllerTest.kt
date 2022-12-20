@@ -69,7 +69,7 @@ class LoginControllerTest {
         // WHEN
         val request = LoginRequest(
             username = "+1237670000000",
-            type = LoginType.MFA.name
+            type = LoginType.MFA.name,
         )
         val ex = assertThrows<HttpClientErrorException> {
             rest.postForEntity(url(), request, LoginResponse::class.java)
@@ -96,7 +96,7 @@ class LoginControllerTest {
         // WHEN
         val request = LoginRequest(
             username = "+1237670000099",
-            type = LoginType.MFA.name
+            type = LoginType.MFA.name,
         )
         val ex = assertThrows<HttpClientErrorException> {
             rest.postForEntity(url(), request, LoginResponse::class.java)
@@ -114,7 +114,7 @@ class LoginControllerTest {
         // WHEN
         val request = LoginRequest(
             username = "invalid-account",
-            type = LoginType.MFA.name
+            type = LoginType.MFA.name,
         )
         val ex = assertThrows<HttpClientErrorException> {
             rest.postForEntity(url(), request, LoginResponse::class.java)
@@ -134,7 +134,7 @@ class LoginControllerTest {
             token = UUID.randomUUID().toString(),
             code = "123456",
             expires = System.currentTimeMillis() + 900000,
-            address = "+1237670000000"
+            address = "+1237670000000",
         )
         otpDao.save(otp)
 
@@ -143,7 +143,7 @@ class LoginControllerTest {
             mfaToken = otp.token,
             verificationCode = otp.code,
             type = LoginType.MFA.name,
-            username = otp.address
+            username = otp.address,
         )
         val response = rest.postForEntity(url(), request, LoginResponse::class.java)
 
@@ -159,7 +159,7 @@ class LoginControllerTest {
         assertEquals(otp.address, decoded.claims[JWTBuilder.CLAIM_NAME]?.asString())
         assertEquals(
             LoginService.USER_TOKEN_TTL_MILLIS / 60000,
-            (decoded.expiresAt.time - decoded.issuedAt.time) / 60000
+            (decoded.expiresAt.time - decoded.issuedAt.time) / 60000,
         )
 
         val login = loginService.findByAccessToken(accessToken)
@@ -178,7 +178,7 @@ class LoginControllerTest {
             token = UUID.randomUUID().toString(),
             code = "123456",
             expires = System.currentTimeMillis() + 900000,
-            address = "+1237670000000"
+            address = "+1237670000000",
         )
         otpDao.save(otp)
 
@@ -187,7 +187,7 @@ class LoginControllerTest {
             mfaToken = otp.token,
             verificationCode = "this-is-an-invalid-code",
             type = LoginType.MFA.name,
-            username = otp.address
+            username = otp.address,
         )
         val ex = assertThrows<HttpClientErrorException> {
             rest.postForEntity(url(), request, LoginResponse::class.java)
@@ -206,7 +206,7 @@ class LoginControllerTest {
         val request = LoginRequest(
             type = LoginType.PASSWORD.name,
             username = "+1237670000000",
-            password = "123"
+            password = "123",
         )
         val response = rest.postForEntity(url(), request, LoginResponse::class.java)
 
@@ -222,7 +222,7 @@ class LoginControllerTest {
         assertEquals(request.username, decoded.claims[JWTBuilder.CLAIM_NAME]?.asString())
         assertEquals(
             LoginService.USER_TOKEN_TTL_MILLIS / 60000,
-            (decoded.expiresAt.time - decoded.issuedAt.time) / 60000
+            (decoded.expiresAt.time - decoded.issuedAt.time) / 60000,
         )
 
         val login = loginService.findByAccessToken(accessToken)
@@ -240,7 +240,7 @@ class LoginControllerTest {
         val request = LoginRequest(
             type = LoginType.PASSWORD.name,
             username = "+1237670000000",
-            password = "invalid password"
+            password = "invalid password",
         )
         val ex = assertThrows<HttpClientErrorException> {
             rest.postForEntity(url(), request, LoginResponse::class.java)
@@ -259,7 +259,7 @@ class LoginControllerTest {
         val request = LoginRequest(
             type = "xxxx??",
             username = "+1237670000000",
-            password = "123"
+            password = "123",
         )
         val ex = assertThrows<HttpClientErrorException> {
             rest.postForEntity(url(), request, LoginResponse::class.java)

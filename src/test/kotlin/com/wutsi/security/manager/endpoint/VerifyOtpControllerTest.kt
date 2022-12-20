@@ -128,6 +128,6 @@ public class VerifyOtpControllerTest {
     private fun createOtp(code: String, expires: Long = System.currentTimeMillis() + 900000) = OtpEntity(
         token = UUID.randomUUID().toString(),
         code = code,
-        expires = expires
+        expires = expires,
     )
 }

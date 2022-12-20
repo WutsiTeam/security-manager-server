@@ -30,9 +30,9 @@ internal class EventHandlerTest {
                 MemberEventPayload(
                     phoneNumber = "+237670000010",
                     accountId = 111L,
-                    pin = "123456"
-                )
-            )
+                    pin = "123456",
+                ),
+            ),
         )
         handler.handleEvent(event)
 
@@ -47,9 +47,9 @@ internal class EventHandlerTest {
             type = EventURN.MEMBER_DELETED.urn,
             payload = mapper.writeValueAsString(
                 MemberEventPayload(
-                    accountId = 111L
-                )
-            )
+                    accountId = 111L,
+                ),
+            ),
         )
         handler.handleEvent(event)
 

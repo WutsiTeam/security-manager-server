@@ -17,5 +17,5 @@ data class KeyEntity(
     val publicKey: String = "",
     val privateKey: String = "",
     val created: Date = Date(),
-    val expires: Date = Date()
+    val expires: Date = Date(),
 )

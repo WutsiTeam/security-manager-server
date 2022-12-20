@@ -7,7 +7,7 @@ import javax.transaction.Transactional
 
 @Service
 class LogoutDelegate(
-    private val service: LoginService
+    private val service: LoginService,
 ) {
     @Transactional
     fun invoke() {

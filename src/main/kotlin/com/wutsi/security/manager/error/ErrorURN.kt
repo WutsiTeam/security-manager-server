@@ -14,5 +14,5 @@ enum class ErrorURN(val urn: String) {
     OTP_NOT_VALID("urn:wutsi:error:security:otp-not-valid"),
 
     PASSWORD_NOT_FOUND("urn:wutsi:error:security:password-not-found"),
-    PASSWORD_MISMATCH("urn:wutsi:error:security:password-mismatch")
+    PASSWORD_MISMATCH("urn:wutsi:error:security:password-mismatch"),
 }

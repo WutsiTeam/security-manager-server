@@ -41,11 +41,11 @@ internal class MembershipEventHandlerTest {
         val payload = MemberEventPayload(
             phoneNumber = "+237670000010",
             accountId = 111L,
-            pin = "123456"
+            pin = "123456",
         )
         val event = Event(
             type = EventURN.MEMBER_REGISTERED.urn,
-            payload = mapper.writeValueAsString(payload)
+            payload = mapper.writeValueAsString(payload),
         )
         handler.onMemberRegistered(event)
 
@@ -54,8 +54,8 @@ internal class MembershipEventHandlerTest {
             CreatePasswordRequest(
                 value = payload.pin!!,
                 username = payload.phoneNumber,
-                accountId = payload.accountId
-            )
+                accountId = payload.accountId,
+            ),
         )
     }
 
@@ -63,11 +63,11 @@ internal class MembershipEventHandlerTest {
     fun onMemberDeleted() {
         // WHEN
         val payload = MemberEventPayload(
-            accountId = 111L
+            accountId = 111L,
         )
         val event = Event(
             type = EventURN.MEMBER_DELETED.urn,
-            payload = mapper.writeValueAsString(payload)
+            payload = mapper.writeValueAsString(payload),
         )
         handler.onMemberDeleted(event)
 

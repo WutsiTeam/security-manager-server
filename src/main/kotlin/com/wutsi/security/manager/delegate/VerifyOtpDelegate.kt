@@ -8,7 +8,7 @@ import org.springframework.stereotype.Service
 @Service
 public class VerifyOtpDelegate(
     private val service: OtpService,
-    private val logger: KVLogger
+    private val logger: KVLogger,
 ) {
     public fun invoke(token: String, request: VerifyOTPRequest) {
         logger.add("request_code", request.code)

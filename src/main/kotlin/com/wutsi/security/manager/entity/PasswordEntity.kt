@@ -22,5 +22,5 @@ data class PasswordEntity(
 
     val created: Date = Date(),
     var updated: Date = Date(),
-    var deleted: Date? = null
+    var deleted: Date? = null,
 )

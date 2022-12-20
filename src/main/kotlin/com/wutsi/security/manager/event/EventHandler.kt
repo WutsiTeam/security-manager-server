@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service
 
 @Service
 class EventHandler(
-    private val membership: MembershipEventHandler
+    private val membership: MembershipEventHandler,
 ) {
     @EventListener
     fun handleEvent(event: Event) {

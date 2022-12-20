@@ -28,7 +28,7 @@ public class CreatePasswordControllerTest {
         val request = CreatePasswordRequest(
             value = "123",
             accountId = 1,
-            username = "+15147580000"
+            username = "+15147580000",
         )
         val response = rest.postForEntity(url(), request, CreatePasswordResponse::class.java)
 

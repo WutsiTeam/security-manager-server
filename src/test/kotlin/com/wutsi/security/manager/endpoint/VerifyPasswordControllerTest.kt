@@ -23,7 +23,7 @@ class VerifyPasswordControllerTest : AbstractSecuredControllerTest() {
     fun verify() {
         // WHEN
         val request = VerifyPasswordRequest(
-            value = "123"
+            value = "123",
         )
         val response = rest.postForEntity(url(), request, Any::class.java)
 
@@ -36,7 +36,7 @@ class VerifyPasswordControllerTest : AbstractSecuredControllerTest() {
     fun mismatch() {
         // WHEN
         val request = VerifyPasswordRequest(
-            value = "this is an invalid password"
+            value = "this is an invalid password",
         )
         val ex = assertThrows<HttpClientErrorException> {
             rest.postForEntity(url(), request, Any::class.java)

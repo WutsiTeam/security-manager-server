@@ -18,5 +18,5 @@ data class LoginEntity(
     val accessToken: String = "",
     val created: Date = Date(),
     val expires: Date = Date(),
-    var expired: Date? = null
+    var expired: Date? = null,
 )

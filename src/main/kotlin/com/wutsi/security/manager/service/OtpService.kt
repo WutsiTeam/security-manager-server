@@ -29,7 +29,7 @@ public class OtpService(
     private val dao: com.wutsi.security.manager.dao.OtpRepository,
     private val messagingProvider: MessagingServiceProvider,
     private val messageSource: MessageSource,
-    private val logger: KVLogger
+    private val logger: KVLogger,
 ) {
     companion object {
         private val LOGGER = LoggerFactory.getLogger(OtpService::class.java)
@@ -50,8 +50,8 @@ public class OtpService(
                 token = UUID.randomUUID().toString(),
                 code = generateCode(6),
                 expires = System.currentTimeMillis() + OTP_TTL_MILLIS,
-                address = request.address
-            )
+                address = request.address,
+            ),
         )
 
         // Send
@@ -66,19 +66,19 @@ public class OtpService(
                 recipient = Party(
                     phoneNumber = request.address,
                     email = request.address,
-                    deviceToken = request.address
+                    deviceToken = request.address,
                 ),
                 subject = messageSource.getMessage(
                     "verification_subject",
                     arrayOf(),
-                    locale
+                    locale,
                 ),
                 body = messageSource.getMessage(
                     "verification_message",
                     arrayOf(otp.code),
-                    locale
-                )
-            )
+                    locale,
+                ),
+            ),
         )
         logger.add("message_id", messageId)
 
@@ -90,16 +90,16 @@ public class OtpService(
             .orElseThrow {
                 ConflictException(
                     error = Error(
-                        code = ErrorURN.OTP_EXPIRED.urn
-                    )
+                        code = ErrorURN.OTP_EXPIRED.urn,
+                    ),
                 )
             }
 
         if (otp.expires < System.currentTimeMillis()) {
             throw ConflictException(
                 error = Error(
-                    code = ErrorURN.OTP_EXPIRED.urn
-                )
+                    code = ErrorURN.OTP_EXPIRED.urn,
+                ),
             )
         }
 
@@ -113,9 +113,9 @@ public class OtpService(
                     code = ErrorURN.OTP_NOT_VALID.urn,
                     data = mapOf(
                         "otp-code" to otp.code,
-                        "request-code" to request.code
-                    )
-                )
+                        "request-code" to request.code,
+                    ),
+                ),
             )
         }
         return otp
@@ -136,9 +136,9 @@ public class OtpService(
                     parameter = Parameter(
                         type = ParameterType.PARAMETER_TYPE_PAYLOAD,
                         name = "type",
-                        value = request.type
-                    )
-                )
+                        value = request.type,
+                    ),
+                ),
             )
         }
 

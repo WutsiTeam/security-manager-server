@@ -16,7 +16,7 @@ import java.util.UUID
 
 @Service
 class PasswordService(
-    private val dao: PasswordRepository
+    private val dao: PasswordRepository,
 ) {
     fun create(request: CreatePasswordRequest): PasswordEntity {
         val salt = UUID.randomUUID().toString()
@@ -25,8 +25,8 @@ class PasswordService(
                 accountId = request.accountId,
                 username = request.username,
                 value = hash(request.accountId, request.value, salt),
-                salt = salt
-            )
+                salt = salt,
+            ),
         )
     }
 
@@ -42,8 +42,8 @@ class PasswordService(
         if (value != password.value) {
             throw ConflictException(
                 error = Error(
-                    code = ErrorURN.PASSWORD_MISMATCH.urn
-                )
+                    code = ErrorURN.PASSWORD_MISMATCH.urn,
+                ),
             )
         }
         return password
@@ -71,9 +71,9 @@ class PasswordService(
                 error = Error(
                     code = ErrorURN.PASSWORD_NOT_FOUND.urn,
                     data = mapOf(
-                        "account-id" to accountId
-                    )
-                )
+                        "account-id" to accountId,
+                    ),
+                ),
             )
         }
         return passwords[0]
@@ -86,9 +86,9 @@ class PasswordService(
                 error = Error(
                     code = ErrorURN.PASSWORD_NOT_FOUND.urn,
                     data = mapOf(
-                        "username" to username
-                    )
-                )
+                        "username" to username,
+                    ),
+                ),
             )
         } else {
             return passwords[0]

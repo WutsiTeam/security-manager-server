@@ -30,9 +30,9 @@ class KeyService(private val dao: com.wutsi.security.manager.dao.KeyRepository) 
                         parameter = Parameter(
                             name = "id",
                             value = id.toString(),
-                            type = ParameterType.PARAMETER_TYPE_PATH
-                        )
-                    )
+                            type = ParameterType.PARAMETER_TYPE_PATH,
+                        ),
+                    ),
                 )
             }
 
@@ -43,9 +43,9 @@ class KeyService(private val dao: com.wutsi.security.manager.dao.KeyRepository) 
                     parameter = Parameter(
                         name = "id",
                         value = id.toString(),
-                        type = ParameterType.PARAMETER_TYPE_PATH
-                    )
-                )
+                        type = ParameterType.PARAMETER_TYPE_PATH,
+                    ),
+                ),
             )
         }
 
@@ -71,8 +71,8 @@ class KeyService(private val dao: com.wutsi.security.manager.dao.KeyRepository) 
                 created = Date(),
                 expires = Date(System.currentTimeMillis() + KEY_TTL_MILLIS),
                 privateKey = encoder.encodeToString(keyPair.private.encoded),
-                publicKey = encoder.encodeToString(keyPair.public.encoded)
-            )
+                publicKey = encoder.encodeToString(keyPair.public.encoded),
+            ),
         )
     }
 

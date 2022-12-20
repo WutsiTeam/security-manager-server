@@ -11,6 +11,6 @@ public class LoginDelegate(private val service: LoginService) {
     @Transactional
     public fun invoke(request: LoginRequest): LoginResponse =
         LoginResponse(
-            accessToken = service.login(request)
+            accessToken = service.login(request),
         )
 }
