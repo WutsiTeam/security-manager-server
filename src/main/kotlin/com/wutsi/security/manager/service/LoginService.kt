@@ -6,6 +6,7 @@ import com.wutsi.platform.core.error.Parameter
 import com.wutsi.platform.core.error.ParameterType
 import com.wutsi.platform.core.error.exception.BadRequestException
 import com.wutsi.platform.core.error.exception.ForbiddenException
+import com.wutsi.platform.core.logging.KVLogger
 import com.wutsi.platform.core.messaging.MessagingType
 import com.wutsi.platform.core.security.SubjectType
 import com.wutsi.platform.core.security.TokenBlacklistService
@@ -31,6 +32,7 @@ class LoginService(
     private val keyProvider: RSAKeyProviderImpl,
     private val blacklistService: TokenBlacklistService,
     private val dao: com.wutsi.security.manager.dao.LoginRepository,
+    private val logger: KVLogger,
 ) {
     companion object {
         const val USER_TOKEN_TTL_MILLIS = 84600000L // 1 day
@@ -97,7 +99,10 @@ class LoginService(
         // Blacklist
         val jwt = JWT.decode(login.accessToken)
         val ttl = (jwt.expiresAt.time - System.currentTimeMillis()) / 1000
+        logger.add("login_ttl", ttl)
         if (ttl > 0) {
+            logger.add("login_id", login.id)
+            logger.add("login_blacklisted", true)
             blacklistService.add(login.accessToken, ttl)
         }
         return login
