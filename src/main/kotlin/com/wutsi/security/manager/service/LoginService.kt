@@ -83,6 +83,8 @@ class LoginService(
 
     fun logout(accountId: Long) {
         val logins = dao.findByAccountIdAndExpiredIsNull(accountId)
+        logger.add("account_id", accountId)
+        logger.add("active_logins", logins.size)
         logins.forEach {
             logout(it)
         }
