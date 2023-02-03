@@ -78,6 +78,7 @@ public class OtpService(
                     arrayOf(otp.code),
                     locale,
                 ),
+                mimeType = "text/plain;charset=UTF-8",
             ),
         )
         logger.add("message_id", messageId)
