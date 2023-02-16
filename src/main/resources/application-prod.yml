@@ -20,6 +20,10 @@ spring:
 
 wutsi:
   client-id: security-manager
+  application:
+    otp:
+      test-addresses:
+        - "+237670000000"   # MTN Test Account
   platform:
     cache:
       type: memcached
