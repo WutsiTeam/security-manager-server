@@ -5,14 +5,14 @@ import com.wutsi.event.MemberEventPayload
 import com.wutsi.platform.core.logging.KVLogger
 import com.wutsi.platform.core.stream.Event
 import com.wutsi.security.manager.dto.CreatePasswordRequest
-import com.wutsi.security.manager.service.OtpService
+import com.wutsi.security.manager.service.LoginService
 import com.wutsi.security.manager.service.PasswordService
 import org.springframework.stereotype.Service
 import javax.transaction.Transactional
 
 @Service
 class MembershipEventHandler(
-    private val otpService: OtpService,
+    private val loginService: LoginService,
     private val passwordService: PasswordService,
     private val mapper: ObjectMapper,
     private val logger: KVLogger,
@@ -38,6 +38,7 @@ class MembershipEventHandler(
         log(payload)
 
         passwordService.delete(payload.accountId)
+        loginService.logout(payload.accountId)
     }
 
     private fun toMemberPayload(event: Event): MemberEventPayload =

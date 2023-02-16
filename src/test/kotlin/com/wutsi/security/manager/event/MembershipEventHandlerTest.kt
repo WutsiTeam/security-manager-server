@@ -10,7 +10,7 @@ import com.wutsi.event.MemberEventPayload
 import com.wutsi.platform.core.stream.Event
 import com.wutsi.security.manager.dto.CreatePasswordRequest
 import com.wutsi.security.manager.entity.PasswordEntity
-import com.wutsi.security.manager.service.OtpService
+import com.wutsi.security.manager.service.LoginService
 import com.wutsi.security.manager.service.PasswordService
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
@@ -20,10 +20,10 @@ import org.springframework.boot.test.mock.mockito.MockBean
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 internal class MembershipEventHandlerTest {
     @MockBean
-    private lateinit var otpService: OtpService
+    private lateinit var passwordService: PasswordService
 
     @MockBean
-    private lateinit var passwordService: PasswordService
+    private lateinit var loginService: LoginService
 
     @Autowired
     private lateinit var handler: MembershipEventHandler
@@ -73,5 +73,6 @@ internal class MembershipEventHandlerTest {
 
         // THEN
         verify(passwordService).delete(payload.accountId)
+        verify(loginService).logout(payload.accountId)
     }
 }
