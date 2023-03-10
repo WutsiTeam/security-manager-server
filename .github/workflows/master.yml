@@ -64,7 +64,6 @@ jobs:
         env:
           HEROKU_API_KEY: ${{secrets.HEROKU_API_KEY_TEST}}
           HEROKU_APP: security-manager-test
-          CLOUDAMQP_URL: ${{secrets.CLOUDAMQP_URL_TEST}}
           AWS_ACCESS_KEY: ${{secrets.AWS_ACCESS_KEY_TEST}}
           AWS_SECRET_KEY: ${{secrets.AWS_SECRET_KEY_TEST}}
           MYSQL_USERNAME: ${{secrets.MYSQL_USERNAME_TEST}}
@@ -84,7 +83,6 @@ jobs:
           heroku buildpacks:clear --app ${HEROKU_APP}
           heroku buildpacks:add heroku/jvm --app ${HEROKU_APP}
           heroku config:set --app ${HEROKU_APP} APP_PROFILE=test
-          heroku config:set --app ${HEROKU_APP} CLOUDAMQP_URL=${CLOUDAMQP_URL}
           heroku config:set --app ${HEROKU_APP} AWS_ACCESS_KEY=${AWS_ACCESS_KEY}
           heroku config:set --app ${HEROKU_APP} AWS_SECRET_KEY=${AWS_SECRET_KEY}
           heroku config:set --app ${HEROKU_APP} SPRING_DATABASE_USERNAME=${MYSQL_USERNAME}
@@ -147,7 +145,6 @@ jobs:
         env:
           HEROKU_API_KEY: ${{secrets.HEROKU_API_KEY_PROD}}
           HEROKU_APP: security-manager-prod
-          CLOUDAMQP_URL: ${{secrets.CLOUDAMQP_URL_PROD}}
           AWS_ACCESS_KEY: ${{secrets.AWS_ACCESS_KEY_PROD}}
           AWS_SECRET_KEY: ${{secrets.AWS_SECRET_KEY_PROD}}
           MYSQL_USERNAME: ${{secrets.MYSQL_USERNAME_PROD}}
@@ -167,7 +164,6 @@ jobs:
           heroku buildpacks:clear --app ${HEROKU_APP}
           heroku buildpacks:add heroku/jvm --app ${HEROKU_APP}
           heroku config:set --app ${HEROKU_APP} APP_PROFILE=prod
-          heroku config:set --app ${HEROKU_APP} CLOUDAMQP_URL=${CLOUDAMQP_URL}
           heroku config:set --app ${HEROKU_APP} AWS_ACCESS_KEY=${AWS_ACCESS_KEY}
           heroku config:set --app ${HEROKU_APP} AWS_SECRET_KEY=${AWS_SECRET_KEY}
           heroku config:set --app ${HEROKU_APP} SPRING_DATABASE_USERNAME=${MYSQL_USERNAME}

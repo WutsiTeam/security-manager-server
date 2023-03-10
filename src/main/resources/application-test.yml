@@ -63,8 +63,3 @@ wutsi:
         type: redis
         redis:
           url: ${REDISCLOUD_URL}
-    stream:
-      type: rabbitmq
-      rabbitmq:
-        url: ${CLOUDAMQP_URL}
-

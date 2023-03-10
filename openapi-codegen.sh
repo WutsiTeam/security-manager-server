@@ -21,7 +21,6 @@ java -jar ${CODEGEN_JAR} server \
     -service_cache \
     -service_logger \
     -service_messaging \
-    -service_mqueue \
     -service_slack \
     -service_swagger
 
