@@ -35,7 +35,6 @@
     <flyway.version>9.3.0</flyway.version>
 
     <wutsi-platform-core.version>0.0.206</wutsi-platform-core.version>
-    <wutsi-events.version>1.0.23</wutsi-events.version>
   </properties>
 
   <dependencies>
@@ -43,11 +42,6 @@
       <groupId>com.wutsi</groupId>
       <artifactId>wutsi-platform-core</artifactId>
       <version>${wutsi-platform-core.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>com.wutsi</groupId>
-      <artifactId>wutsi-events</artifactId>
-      <version>${wutsi-events.version}</version>
     </dependency>
 
     <dependency>
